@@ -6,7 +6,6 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/onmetal/inventory/pkg/printer"
-	"github.com/onmetal/inventory/pkg/utils"
 )
 
 type Info struct {
@@ -15,12 +14,14 @@ type Info struct {
 }
 
 type Svc struct {
-	printer *printer.Svc
+	printer  *printer.Svc
+	hostType string
 }
 
-func NewSvc(printer *printer.Svc) *Svc {
+func NewSvc(printer *printer.Svc, hostType string) *Svc {
 	return &Svc{
-		printer: printer,
+		printer:  printer,
+		hostType: hostType,
 	}
 }
 
@@ -31,10 +32,6 @@ func (s *Svc) GetData() (*Info, error) {
 		return nil, errors.Wrap(err, "failed to get hostname")
 	}
 	info.Name = name
-	hostType, err := utils.GetHostType()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to determine host type")
-	}
-	info.Type = hostType
+	info.Type = s.hostType
 	return &info, nil
 }

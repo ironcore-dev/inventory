@@ -24,23 +24,21 @@ type Distro struct {
 }
 
 type Svc struct {
-	printer *printer.Svc
+	printer  *printer.Svc
+	hostType string
 }
 
-func NewSvc(printer *printer.Svc) *Svc {
+func NewSvc(printer *printer.Svc, hostType string) *Svc {
 	return &Svc{
-		printer: printer,
+		printer:  printer,
+		hostType: hostType,
 	}
 }
 
 func (s *Svc) GetData() (*Distro, error) {
 	distro := Distro{}
 	rawInfo := make(map[string]interface{})
-	hostType, err := utils.GetHostType()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to determine host type")
-	}
-	if hostType == utils.CSwitchType {
+	if s.hostType == utils.CSwitchType {
 		sonicInfo, err := ioutil.ReadFile(utils.CVersionFilePath)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to read SONiC version file")

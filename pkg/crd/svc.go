@@ -21,10 +21,11 @@ import (
 )
 
 type Svc struct {
-	client clientv1alpha1.InventoryInterface
+	client   clientv1alpha1.InventoryInterface
+	hostType string
 }
 
-func NewSvc(kubeconfig string, namespace string) (*Svc, error) {
+func NewSvc(kubeconfig string, namespace string, hostType string) (*Svc, error) {
 	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to read kubeconfig from path %s", kubeconfig)
@@ -42,7 +43,8 @@ func NewSvc(kubeconfig string, namespace string) (*Svc, error) {
 	client := clientset.Inventories(namespace)
 
 	return &Svc{
-		client: client,
+		client:   client,
+		hostType: hostType,
 	}, nil
 }
 
@@ -117,10 +119,18 @@ func (s *Svc) setSystem(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 		return
 	}
 
-	cr.Name = dmi.SystemInformation.UUID
+	// SONiC switches has dumb UUIDs like 03000200-0400-0500-0006-000700080009, maybe
+	// the same on any switch, so it was decided to use md5 hash of serial number as UUID
+	hostUUID := dmi.SystemInformation.UUID
+	if s.hostType == utils.CSwitchType {
+		if calculatedUUID, err := utils.GetUUID(dmi.SystemInformation.SerialNumber); err == nil {
+			hostUUID = calculatedUUID
+		}
+	}
+	cr.Name = hostUUID
 
 	cr.Spec.System = &apiv1alpha1.SystemSpec{
-		ID:           dmi.SystemInformation.UUID,
+		ID:           hostUUID,
 		Manufacturer: dmi.SystemInformation.Manufacturer,
 		ProductSKU:   dmi.SystemInformation.SKUNumber,
 		SerialNumber: dmi.SystemInformation.SerialNumber,
@@ -346,10 +356,9 @@ func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	}
 
 	nics := make([]apiv1alpha1.NICSpec, 0)
-	hostType, _ := utils.GetHostType()
 	for _, nic := range inv.NICs {
 		// filter non-physical interfaces according to type of inventorying host
-		if hostType == utils.CSwitchType {
+		if s.hostType == utils.CSwitchType {
 			if nic.PCIAddress == "" && !strings.HasPrefix(nic.Name, "Ethernet") {
 				continue
 			}

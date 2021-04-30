@@ -22,6 +22,7 @@ import (
 	"github.com/onmetal/inventory/pkg/numa"
 	"github.com/onmetal/inventory/pkg/pci"
 	"github.com/onmetal/inventory/pkg/printer"
+	"github.com/onmetal/inventory/pkg/utils"
 	"github.com/onmetal/inventory/pkg/virt"
 )
 
@@ -55,7 +56,15 @@ func NewSvc() (*Svc, int) {
 
 	p := printer.NewSvc(f.Verbose)
 
-	crdSvc, err := crd.NewSvc(f.Kubeconfig, f.KubeNamespace)
+	// determine host type in the beginning, because methods of data collection on the different host types
+	// (at the moment only machine and switch, but in the future may occur more switches types) may differ
+	// or may depend on host type, i.e. distro info or host name in system info
+	hostType, err := utils.GetHostType()
+	if err != nil {
+		p.Err(errors.Wrap(err, "unable to determine host type"))
+	}
+
+	crdSvc, err := crd.NewSvc(f.Kubeconfig, f.KubeNamespace, hostType)
 	if err != nil {
 		p.Err(errors.Wrapf(err, "unable to create k8s resorce svc"))
 		return nil, CErrRetCode
@@ -99,8 +108,8 @@ func NewSvc() (*Svc, int) {
 
 	virtSvc := virt.NewSvc(dmiSvc, cpuInfoSvc, f.Root)
 
-	hostSvc := host.NewSvc(p)
-	distroSvc := distro.NewSvc(p)
+	hostSvc := host.NewSvc(p, hostType)
+	distroSvc := distro.NewSvc(p, hostType)
 
 	return &Svc{
 		printer:    p,
