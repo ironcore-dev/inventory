@@ -21,11 +21,10 @@ import (
 )
 
 type Svc struct {
-	client   clientv1alpha1.InventoryInterface
-	hostType string
+	client clientv1alpha1.InventoryInterface
 }
 
-func NewSvc(kubeconfig string, namespace string, hostType string) (*Svc, error) {
+func NewSvc(kubeconfig string, namespace string) (*Svc, error) {
 	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to read kubeconfig from path %s", kubeconfig)
@@ -43,8 +42,7 @@ func NewSvc(kubeconfig string, namespace string, hostType string) (*Svc, error) 
 	client := clientset.Inventories(namespace)
 
 	return &Svc{
-		client:   client,
-		hostType: hostType,
+		client: client,
 	}, nil
 }
 
@@ -119,13 +117,15 @@ func (s *Svc) setSystem(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 		return
 	}
 
+	if inv.Host == nil {
+		return
+	}
+
 	// SONiC switches has dumb UUIDs like 03000200-0400-0500-0006-000700080009, maybe
 	// the same on any switch, so it was decided to use md5 hash of serial number as UUID
 	hostUUID := dmi.SystemInformation.UUID
-	if s.hostType == utils.CSwitchType {
-		if calculatedUUID, err := utils.GetUUID(dmi.SystemInformation.SerialNumber); err == nil {
-			hostUUID = calculatedUUID
-		}
+	if inv.Host.Type == utils.CSwitchType {
+		hostUUID = utils.GetUUID(utils.CSonicNamespace, dmi.SystemInformation.SerialNumber)
 	}
 	cr.Name = hostUUID
 
@@ -317,6 +317,10 @@ func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 		return
 	}
 
+	if inv.Host == nil {
+		return
+	}
+
 	lldpMap := make(map[int][]apiv1alpha1.LLDPSpec)
 	for _, lldp := range inv.LLDPFrames {
 		id, _ := strconv.Atoi(lldp.InterfaceID)
@@ -358,7 +362,7 @@ func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	nics := make([]apiv1alpha1.NICSpec, 0)
 	for _, nic := range inv.NICs {
 		// filter non-physical interfaces according to type of inventorying host
-		if s.hostType == utils.CSwitchType {
+		if inv.Host.Type == utils.CSwitchType {
 			if nic.PCIAddress == "" && !strings.HasPrefix(nic.Name, "Ethernet") {
 				continue
 			}

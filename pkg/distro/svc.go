@@ -24,21 +24,20 @@ type Distro struct {
 }
 
 type Svc struct {
-	printer  *printer.Svc
-	hostType string
+	printer *printer.Svc
 }
 
-func NewSvc(printer *printer.Svc, hostType string) *Svc {
+func NewSvc(printer *printer.Svc) *Svc {
 	return &Svc{
-		printer:  printer,
-		hostType: hostType,
+		printer: printer,
 	}
 }
 
-func (s *Svc) GetData() (*Distro, error) {
+func (s *Svc) GetData(hostType string) (*Distro, error) {
 	distro := Distro{}
 	rawInfo := make(map[string]interface{})
-	if s.hostType == utils.CSwitchType {
+	switch hostType {
+	case utils.CSwitchType:
 		sonicInfo, err := ioutil.ReadFile(utils.CVersionFilePath)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to read SONiC version file")
@@ -51,6 +50,7 @@ func (s *Svc) GetData() (*Distro, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to process SONiC version")
 		}
+		// todo: case utils.CMachineType:
 	}
 	return &distro, nil
 }

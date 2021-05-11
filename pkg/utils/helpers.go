@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"os"
 
 	"github.com/google/uuid"
@@ -12,6 +10,7 @@ const (
 	CVersionFilePath = "/etc/sonic/sonic_version.yml"
 	CMachineType     = "Machine"
 	CSwitchType      = "Switch"
+	CSonicNamespace  = "switch.onmetal.de"
 )
 
 func GetHostType() (string, error) {
@@ -26,13 +25,8 @@ func GetHostType() (string, error) {
 	return CSwitchType, nil
 }
 
-func GetUUID(text string) (string, error) {
-	hasher := md5.New()
-	hasher.Write([]byte(text))
-	rawUid := hex.EncodeToString(hasher.Sum(nil))
-	if uid, err := uuid.Parse(rawUid); err == nil {
-		return uid.String(), nil
-	} else {
-		return "", err
-	}
+func GetUUID(namespace string, identifier string) string {
+	namespaceUUID := uuid.NewMD5(uuid.UUID{}, []byte(namespace))
+	newUUID := uuid.NewMD5(namespaceUUID, []byte(identifier))
+	return newUUID.String()
 }
