@@ -13,9 +13,9 @@ const (
 	CSonicNamespace  = "switch.onmetal.de"
 )
 
-func GetHostType() (string, error) {
+func GetHostType(versionFile string) (string, error) {
 	//todo: determining how to check host type without checking files
-	if _, err := os.Stat(CVersionFilePath); err != nil {
+	if _, err := os.Stat(versionFile); err != nil {
 		if !os.IsNotExist(err) {
 			return "", err
 		} else {

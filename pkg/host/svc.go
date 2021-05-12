@@ -2,6 +2,7 @@ package host
 
 import (
 	"os"
+	"path"
 
 	"github.com/pkg/errors"
 
@@ -15,18 +16,19 @@ type Info struct {
 }
 
 type Svc struct {
-	printer  *printer.Svc
-	hostType string
+	printer           *printer.Svc
+	switchVersionPath string
 }
 
-func NewSvc(printer *printer.Svc) *Svc {
+func NewSvc(printer *printer.Svc, basePath string) *Svc {
 	return &Svc{
-		printer: printer,
+		printer:           printer,
+		switchVersionPath: path.Join(basePath, utils.CVersionFilePath),
 	}
 }
 
 func (s *Svc) GetData() (*Info, error) {
-	hostType, err := utils.GetHostType()
+	hostType, err := utils.GetHostType(s.switchVersionPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to determine host type")
 	}
