@@ -21,7 +21,10 @@ import (
 	"github.com/onmetal/inventory/pkg/utils"
 )
 
-const CSonicNamespace = "switch.onmetal.de"
+const (
+	CMACAddressLabelPrefix = "machine.onmetal.de/mac-address-"
+	CSonicNamespace = "switch.onmetal.de"
+)
 
 type Svc struct {
 	client clientv1alpha1.InventoryInterface
@@ -101,9 +104,17 @@ func (s *Svc) Save(inv *apiv1alpha1.Inventory) error {
 		return errors.Wrap(err, "unable to get resource")
 	}
 
-	inv.ResourceVersion = existing.ResourceVersion
+	existing.Spec = inv.Spec
 
-	if _, err := s.client.Update(context.Background(), inv, metav1.UpdateOptions{}); err != nil {
+	if existing.Labels == nil {
+		existing.Labels = inv.Labels
+	} else {
+		for k, v := range inv.Labels {
+			existing.Labels[k] = v
+		}
+	}
+
+	if _, err := s.client.Update(context.Background(), existing, metav1.UpdateOptions{}); err != nil {
 		return errors.Wrap(err, "unhandled error on update")
 	}
 
@@ -369,6 +380,11 @@ func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 		ndpMap[ndp.DeviceIndex] = append(ndpMap[ndp.DeviceIndex], n)
 	}
 
+	labels := cr.GetLabels()
+	if labels == nil {
+		labels = make(map[string]string)
+	}
+
 	nics := make([]apiv1alpha1.NICSpec, 0)
 	for _, nic := range inv.NICs {
 		// filter non-physical interfaces according to type of inventorying host
@@ -404,8 +420,13 @@ func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 			LLDPs:      lldps,
 			NDPs:       ndps,
 		}
+
+		labels[CMACAddressLabelPrefix+strings.ToLower(nic.Name)] = nic.Address
+
 		nics = append(nics, ns)
 	}
+
+	cr.SetLabels(labels)
 
 	sort.Slice(nics, func(i, j int) bool {
 		return nics[i].Name < nics[j].Name
