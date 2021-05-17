@@ -323,6 +323,10 @@ func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 
 	lldpMap := make(map[int][]apiv1alpha1.LLDPSpec)
 	for _, lldp := range inv.LLDPFrames {
+		enabledCapabilities := make([]string, 0)
+		for _, capability := range lldp.EnabledCapabilities {
+			enabledCapabilities = append(enabledCapabilities, string(capability))
+		}
 		id, _ := strconv.Atoi(lldp.InterfaceID)
 		l := apiv1alpha1.LLDPSpec{
 			ChassisID:         lldp.ChassisID,
@@ -330,6 +334,8 @@ func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 			SystemDescription: lldp.SystemDescription,
 			PortID:            lldp.PortID,
 			PortDescription:   lldp.PortDescription,
+			//todo: update LLDPSpec in k8s-inventory/types
+			//Capabilities:      enabledCapabilities,
 		}
 
 		if _, ok := lldpMap[id]; !ok {

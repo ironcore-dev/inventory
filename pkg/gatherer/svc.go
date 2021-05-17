@@ -86,8 +86,10 @@ func NewSvc() (*Svc, int) {
 	pciBusSvc := pci.NewBusSvc(p, pciDevSvc)
 	pciSvc := pci.NewSvc(p, pciBusSvc, f.Root)
 
+	hostSvc := host.NewSvc(p, f.Root)
+
 	lldpFrameInfoSvc := lldp.NewFrameSvc(p)
-	lldpSvc := lldp.NewSvc(p, lldpFrameInfoSvc, f.Root)
+	lldpSvc := lldp.NewSvc(p, lldpFrameInfoSvc, hostSvc, f.Root)
 
 	nicDevSvc := nic.NewDeviceSvc(p)
 	nicSvc := nic.NewSvc(p, nicDevSvc, f.Root)
@@ -99,7 +101,6 @@ func NewSvc() (*Svc, int) {
 
 	virtSvc := virt.NewSvc(dmiSvc, cpuInfoSvc, f.Root)
 
-	hostSvc := host.NewSvc(p, f.Root)
 	distroSvc := distro.NewSvc(p, hostSvc, f.Root)
 
 	return &Svc{

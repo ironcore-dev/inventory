@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"math/bits"
 	"os"
 
 	"github.com/google/uuid"
@@ -29,4 +30,14 @@ func GetUUID(namespace string, identifier string) string {
 	namespaceUUID := uuid.NewMD5(uuid.UUID{}, []byte(namespace))
 	newUUID := uuid.NewMD5(namespaceUUID, []byte(identifier))
 	return newUUID.String()
+}
+
+func GetBitsList(num uint8, bitsList *[]int) {
+	num = bits.Reverse8(num)
+	for bit := 0; bit < 7; bit++ {
+		if num&1 == 1 {
+			*bitsList = append(*bitsList, bit)
+		}
+		num = num >> 1
+	}
 }
