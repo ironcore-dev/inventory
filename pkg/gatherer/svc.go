@@ -88,8 +88,9 @@ func NewSvc() (*Svc, int) {
 
 	hostSvc := host.NewSvc(p, f.Root)
 
+	redisSvc := lldp.NewRedisSvc(f.Root)
 	lldpFrameInfoSvc := lldp.NewFrameSvc(p)
-	lldpSvc := lldp.NewSvc(p, lldpFrameInfoSvc, hostSvc, f.Root)
+	lldpSvc := lldp.NewSvc(p, lldpFrameInfoSvc, hostSvc, redisSvc, f.Root)
 
 	nicDevSvc := nic.NewDeviceSvc(p)
 	nicSvc := nic.NewSvc(p, nicDevSvc, f.Root)

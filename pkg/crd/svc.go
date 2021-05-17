@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/google/uuid"
 	apiv1alpha1 "github.com/onmetal/k8s-inventory/api/v1alpha1"
 	clientv1alpha1 "github.com/onmetal/k8s-inventory/clientset/v1alpha1"
 	"github.com/pkg/errors"
@@ -19,6 +20,8 @@ import (
 	"github.com/onmetal/inventory/pkg/netlink"
 	"github.com/onmetal/inventory/pkg/utils"
 )
+
+const CSonicNamespace = "switch.onmetal.de"
 
 type Svc struct {
 	client clientv1alpha1.InventoryInterface
@@ -125,7 +128,7 @@ func (s *Svc) setSystem(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	// the same on any switch, so it was decided to use md5 hash of serial number as UUID
 	hostUUID := dmi.SystemInformation.UUID
 	if inv.Host.Type == utils.CSwitchType {
-		hostUUID = utils.GetUUID(utils.CSonicNamespace, dmi.SystemInformation.SerialNumber)
+		hostUUID = getUUID(CSonicNamespace, dmi.SystemInformation.SerialNumber)
 	}
 	cr.Name = hostUUID
 
@@ -327,6 +330,7 @@ func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 		for _, capability := range lldp.EnabledCapabilities {
 			enabledCapabilities = append(enabledCapabilities, string(capability))
 		}
+		sort.Strings(enabledCapabilities)
 		id, _ := strconv.Atoi(lldp.InterfaceID)
 		l := apiv1alpha1.LLDPSpec{
 			ChassisID:         lldp.ChassisID,
@@ -447,4 +451,10 @@ func (s *Svc) setDistro(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 		BuildNumber:   inv.Distro.BuildNumber,
 		BuildBy:       inv.Distro.BuildBy,
 	}
+}
+
+func getUUID(namespace string, identifier string) string {
+	namespaceUUID := uuid.NewMD5(uuid.UUID{}, []byte(namespace))
+	newUUID := uuid.NewMD5(namespaceUUID, []byte(identifier))
+	return newUUID.String()
 }

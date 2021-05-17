@@ -3,38 +3,33 @@ package lldp
 import (
 	"io/ioutil"
 	"path"
-	"strings"
 
-	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
 
-	"github.com/onmetal/inventory/pkg/file"
 	"github.com/onmetal/inventory/pkg/host"
 	"github.com/onmetal/inventory/pkg/printer"
 	"github.com/onmetal/inventory/pkg/utils"
 )
 
 const (
-	CLLDPPath     = "/run/systemd/netif/lldp"
-	CClassNetPath = "/sys/class/net/"
-	CIndexFile    = "ifindex"
+	CLLDPPath = "/run/systemd/netif/lldp"
 )
 
 type Svc struct {
 	printer      *printer.Svc
 	frameInfoSvc *FrameSvc
 	hostSvc      *host.Svc
+	redisSvc     *RedisSvc
 	lldpPath     string
-	indexPath    string
 }
 
-func NewSvc(printer *printer.Svc, frameInfoSvc *FrameSvc, hostSvc *host.Svc, basePath string) *Svc {
+func NewSvc(printer *printer.Svc, frameInfoSvc *FrameSvc, hostSvc *host.Svc, redisSvc *RedisSvc, basePath string) *Svc {
 	return &Svc{
 		printer:      printer,
 		frameInfoSvc: frameInfoSvc,
 		hostSvc:      hostSvc,
+		redisSvc:     redisSvc,
 		lldpPath:     path.Join(basePath, CLLDPPath),
-		indexPath:    path.Join(basePath, CClassNetPath),
 	}
 }
 
@@ -64,56 +59,11 @@ func (s *Svc) GetData() ([]Frame, error) {
 			frameInfos = append(frameInfos, *info)
 		}
 	case utils.CSwitchType:
-		redisClient := utils.Client()
-		lldpKeys, err := utils.GetKeysByPattern(redisClient, utils.CLLDPEntryKeyMask)
+		frames, err := s.redisSvc.GetFrames()
 		if err != nil {
-			s.printer.VErr(err)
-			return nil, err
+			return nil, errors.Wrap(err, "unable to process redis lldp data")
 		}
-		for _, key := range lldpKeys {
-			frame, err := s.processRedisPortData(key, redisClient)
-			if err != nil {
-				return nil, err
-			}
-			frameInfos = append(frameInfos, *frame)
-		}
+		frameInfos = append(frameInfos, frames...)
 	}
 	return frameInfos, nil
-}
-
-func (s *Svc) processRedisPortData(key string, redisClient *redis.Client) (*Frame, error) {
-	port := strings.Split(key, ":")
-	filePath := path.Join(s.indexPath, port[1], CIndexFile)
-	fileVal, err := file.ToString(filePath)
-	if err != nil {
-		return nil, errors.Wrapf(err, "unable to get interface index value from %s", filePath)
-	}
-	rawData, err := utils.GetValuesFromHashEntry(redisClient, key, &utils.CRedisLLDPFields)
-	if err != nil {
-		s.printer.VErr(errors.Errorf("unable to collect LLDP info for interface %s", port[1]))
-		return nil, err
-	}
-	capabilities, err := GetCapabilities(rawData["lldp_rem_sys_cap_supported"])
-	if err != nil {
-		s.printer.VErr(errors.Wrap(err, "unable to collect supported capabilities for remote interface"))
-		return nil, err
-	}
-	enabledCapabilities, err := GetCapabilities(rawData["lldp_rem_sys_cap_enabled"])
-	if err != nil {
-		s.printer.VErr(errors.Wrap(err, "unable to collect enabled capabilities for remote interface"))
-		return nil, err
-	}
-	frame := &Frame{
-		InterfaceID:         fileVal,
-		ChassisID:           rawData["lldp_rem_chassis_id"],
-		SystemName:          rawData["lldp_rem_sys_name"],
-		SystemDescription:   rawData["lldp_rem_sys_desc"],
-		Capabilities:        capabilities,
-		EnabledCapabilities: enabledCapabilities,
-		PortID:              rawData["lldp_rem_port_id"],
-		PortDescription:     rawData["lldp_rem_port_desc"],
-		ManagementAddresses: strings.Split(rawData["lldp_rem_man_addr"], ","),
-		TTL:                 0,
-	}
-	return frame, nil
 }

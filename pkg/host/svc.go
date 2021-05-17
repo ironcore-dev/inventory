@@ -28,7 +28,7 @@ func NewSvc(printer *printer.Svc, basePath string) *Svc {
 }
 
 func (s *Svc) GetData() (*Info, error) {
-	hostType, err := utils.GetHostType(s.switchVersionPath)
+	hostType, err := getHostType(s.switchVersionPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to determine host type")
 	}
@@ -41,4 +41,16 @@ func (s *Svc) GetData() (*Info, error) {
 	info.Name = name
 	info.Type = hostType
 	return &info, nil
+}
+
+func getHostType(versionFile string) (string, error) {
+	//todo: determining how to check host type without checking files
+	if _, err := os.Stat(versionFile); err != nil {
+		if !os.IsNotExist(err) {
+			return "", err
+		} else {
+			return utils.CMachineType, nil
+		}
+	}
+	return utils.CSwitchType, nil
 }
