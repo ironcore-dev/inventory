@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/google/uuid"
 	apiv1alpha1 "github.com/onmetal/k8s-inventory/api/v1alpha1"
 	clientv1alpha1 "github.com/onmetal/k8s-inventory/clientset/v1alpha1"
 	"github.com/pkg/errors"
@@ -23,7 +22,7 @@ import (
 
 const (
 	CMACAddressLabelPrefix = "machine.onmetal.de/mac-address-"
-	CSonicNamespace = "switch.onmetal.de"
+	CSonicNamespace        = "switch.onmetal.de"
 )
 
 type Svc struct {
@@ -337,11 +336,11 @@ func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 
 	lldpMap := make(map[int][]apiv1alpha1.LLDPSpec)
 	for _, lldp := range inv.LLDPFrames {
-		enabledCapabilities := make([]string, 0)
+		enabledCapabilities := make(Capabilities, 0)
 		for _, capability := range lldp.EnabledCapabilities {
-			enabledCapabilities = append(enabledCapabilities, string(capability))
+			enabledCapabilities = append(enabledCapabilities, apiv1alpha1.LLDPCapabilities(capability))
 		}
-		sort.Strings(enabledCapabilities)
+		sort.Sort(enabledCapabilities)
 		id, _ := strconv.Atoi(lldp.InterfaceID)
 		l := apiv1alpha1.LLDPSpec{
 			ChassisID:         lldp.ChassisID,
@@ -349,8 +348,7 @@ func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 			SystemDescription: lldp.SystemDescription,
 			PortID:            lldp.PortID,
 			PortDescription:   lldp.PortDescription,
-			//todo: update LLDPSpec in k8s-inventory/types
-			//Capabilities:      enabledCapabilities,
+			Capabilities:      enabledCapabilities,
 		}
 
 		if _, ok := lldpMap[id]; !ok {
@@ -421,7 +419,9 @@ func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 			NDPs:       ndps,
 		}
 
-		labels[CMACAddressLabelPrefix+strings.ToLower(nic.Name)] = nic.Address
+		// Due to k8s validation which allows labels to consist of alphanumeric characters, '-', '_' or '.' need to replace
+		// colons in nic's MAC address
+		labels[CMACAddressLabelPrefix+strings.ToLower(nic.Name)] = strings.ReplaceAll(nic.Address, ":", "-")
 
 		nics = append(nics, ns)
 	}
@@ -472,10 +472,4 @@ func (s *Svc) setDistro(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 		BuildNumber:   inv.Distro.BuildNumber,
 		BuildBy:       inv.Distro.BuildBy,
 	}
-}
-
-func getUUID(namespace string, identifier string) string {
-	namespaceUUID := uuid.NewMD5(uuid.UUID{}, []byte(namespace))
-	newUUID := uuid.NewMD5(namespaceUUID, []byte(identifier))
-	return newUUID.String()
 }
