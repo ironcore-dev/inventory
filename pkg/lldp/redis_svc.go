@@ -19,15 +19,26 @@ const (
 	CIndexFile        = "ifindex"
 )
 
+const (
+	CLLDPRemoteChassisId             = "lldp_rem_chassis_id"
+	CLLDPRemoteSystemName            = "lldp_rem_sys_name"
+	CLLDPRemoteSystemDescription     = "lldp_rem_sys_desc"
+	CLLDPRemoteCapabilitiesSupported = "lldp_rem_sys_cap_supported"
+	CLLDPRemoteCapabilitiesEnabled   = "lldp_rem_sys_cap_enabled"
+	CLLDPRemotePortId                = "lldp_rem_port_id"
+	CLLDPRemotePortDescription       = "lldp_rem_port_desc"
+	CLLDPRemoteManagementAddresses   = "lldp_rem_man_addr"
+)
+
 var CRedisLLDPFields = []string{
-	"lldp_rem_chassis_id",
-	"lldp_rem_sys_name",
-	"lldp_rem_sys_desc",
-	"lldp_rem_sys_cap_supported",
-	"lldp_rem_sys_cap_enabled",
-	"lldp_rem_port_id",
-	"lldp_rem_port_desc",
-	"lldp_rem_man_addr",
+	CLLDPRemoteChassisId,
+	CLLDPRemoteSystemName,
+	CLLDPRemoteSystemDescription,
+	CLLDPRemoteCapabilitiesSupported,
+	CLLDPRemoteCapabilitiesEnabled,
+	CLLDPRemotePortId,
+	CLLDPRemotePortDescription,
+	CLLDPRemoteManagementAddresses,
 }
 
 type RedisSvc struct {
@@ -99,25 +110,25 @@ func (s *RedisSvc) processRedisPortData(key string) (*Frame, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to collect LLDP info for interface %s", port[1])
 	}
-	capabilities, err := getCapabilities(rawData["lldp_rem_sys_cap_supported"])
+	capabilities, err := getCapabilities(rawData[CLLDPRemoteCapabilitiesSupported])
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to decode supported capabilities for remote interface")
 	}
-	enabledCapabilities, err := getCapabilities(rawData["lldp_rem_sys_cap_enabled"])
+	enabledCapabilities, err := getCapabilities(rawData[CLLDPRemoteCapabilitiesEnabled])
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to decode enabled capabilities for remote interface")
 	}
 
 	frame := &Frame{
 		InterfaceID:         fileVal,
-		ChassisID:           rawData["lldp_rem_chassis_id"],
-		SystemName:          rawData["lldp_rem_sys_name"],
-		SystemDescription:   rawData["lldp_rem_sys_desc"],
+		ChassisID:           rawData[CLLDPRemoteChassisId],
+		SystemName:          rawData[CLLDPRemoteSystemName],
+		SystemDescription:   rawData[CLLDPRemoteSystemDescription],
 		Capabilities:        capabilities,
 		EnabledCapabilities: enabledCapabilities,
-		PortID:              rawData["lldp_rem_port_id"],
-		PortDescription:     rawData["lldp_rem_port_desc"],
-		ManagementAddresses: strings.Split(rawData["lldp_rem_man_addr"], ","),
+		PortID:              rawData[CLLDPRemotePortId],
+		PortDescription:     rawData[CLLDPRemotePortDescription],
+		ManagementAddresses: strings.Split(rawData[CLLDPRemoteManagementAddresses], ","),
 		TTL:                 0,
 	}
 	return frame, nil
