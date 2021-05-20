@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/google/uuid"
 	apiv1alpha1 "github.com/onmetal/k8s-inventory/api/v1alpha1"
 	clientv1alpha1 "github.com/onmetal/k8s-inventory/clientset/v1alpha1"
 	"github.com/pkg/errors"
@@ -16,6 +17,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 
 	"github.com/onmetal/inventory/pkg/inventory"
+	"github.com/onmetal/inventory/pkg/lldp"
 	"github.com/onmetal/inventory/pkg/netlink"
 	"github.com/onmetal/inventory/pkg/utils"
 )
@@ -335,19 +337,25 @@ func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	}
 
 	lldpMap := make(map[int][]apiv1alpha1.LLDPSpec)
-	for _, lldp := range inv.LLDPFrames {
-		enabledCapabilities := make(Capabilities, 0)
-		for _, capability := range lldp.EnabledCapabilities {
-			enabledCapabilities = append(enabledCapabilities, apiv1alpha1.LLDPCapabilities(capability))
+	for _, frame := range inv.LLDPFrames {
+		checkMap := make(map[lldp.Capability]struct{})
+		enabledCapabilities := make([]apiv1alpha1.LLDPCapabilities, 0)
+		for _, capability := range frame.EnabledCapabilities {
+			if _, ok := checkMap[capability]; !ok {
+				enabledCapabilities = append(enabledCapabilities, apiv1alpha1.LLDPCapabilities(capability))
+				checkMap[capability] = struct{}{}
+			}
 		}
-		sort.Sort(enabledCapabilities)
-		id, _ := strconv.Atoi(lldp.InterfaceID)
+		sort.Slice(enabledCapabilities, func(i, j int) bool {
+			return enabledCapabilities[i] < enabledCapabilities[j]
+		})
+		id, _ := strconv.Atoi(frame.InterfaceID)
 		l := apiv1alpha1.LLDPSpec{
-			ChassisID:         lldp.ChassisID,
-			SystemName:        lldp.SystemName,
-			SystemDescription: lldp.SystemDescription,
-			PortID:            lldp.PortID,
-			PortDescription:   lldp.PortDescription,
+			ChassisID:         frame.ChassisID,
+			SystemName:        frame.SystemName,
+			SystemDescription: frame.SystemDescription,
+			PortID:            frame.PortID,
+			PortDescription:   frame.PortDescription,
 			Capabilities:      enabledCapabilities,
 		}
 
@@ -472,4 +480,10 @@ func (s *Svc) setDistro(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 		BuildNumber:   inv.Distro.BuildNumber,
 		BuildBy:       inv.Distro.BuildBy,
 	}
+}
+
+func getUUID(namespace string, identifier string) string {
+	namespaceUUID := uuid.NewMD5(uuid.UUID{}, []byte(namespace))
+	newUUID := uuid.NewMD5(namespaceUUID, []byte(identifier))
+	return newUUID.String()
 }
