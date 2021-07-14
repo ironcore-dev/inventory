@@ -149,7 +149,7 @@ func getBitsList(num uint8) []int {
 func getCapabilities(caps string) ([]Capability, error) {
 	capabilities := make([]Capability, 0)
 	for _, i := range strings.Split(caps, " ") {
-		if i == "00" {
+		if i == "00" || i == "" {
 			continue
 		}
 		if parsed, err := strconv.ParseUint(i, 16, 8); err == nil {
