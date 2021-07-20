@@ -37,6 +37,7 @@ const (
 const (
 	CPortLanes = "lanes"
 	CPortFec   = "fec"
+	CPortSpeed = "speed"
 )
 
 var CRedisLLDPFields = []string{
@@ -53,6 +54,7 @@ var CRedisLLDPFields = []string{
 var CRedisPortFields = []string{
 	CPortLanes,
 	CPortFec,
+	CPortSpeed,
 }
 
 // Frame duplicates struct from lldp

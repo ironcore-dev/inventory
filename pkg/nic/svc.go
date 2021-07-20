@@ -3,6 +3,7 @@ package nic
 import (
 	"io/ioutil"
 	"path"
+	"strconv"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -63,6 +64,12 @@ func (s *Svc) GetData() ([]Device, error) {
 			}
 			nic.Lanes = uint8(len(strings.Split(info[redis.CPortLanes], ",")))
 			nic.FEC = info[redis.CPortFec]
+			speed, err := strconv.Atoi(info[redis.CPortSpeed])
+			if err != nil {
+				s.printer.VErr(errors.Wrap(err, "unable to collect additional Device data from Redis"))
+				continue
+			}
+			nic.Speed = uint32(speed)
 		}
 		nics = append(nics, *nic)
 	}
