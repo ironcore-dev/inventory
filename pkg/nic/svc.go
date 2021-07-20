@@ -56,7 +56,7 @@ func (s *Svc) GetData() ([]Device, error) {
 			s.printer.VErr(errors.Wrap(err, "unable to collect Device data"))
 			continue
 		}
-		if hostInfo.Type == utils.CSwitchType {
+		if hostInfo.Type == utils.CSwitchType && strings.HasPrefix(fName, "Ethernet") {
 			info, err := s.redisSvc.GetPortAdditionalInfo(fName)
 			if err != nil {
 				s.printer.VErr(errors.Wrap(err, "unable to collect additional Device data from Redis"))
