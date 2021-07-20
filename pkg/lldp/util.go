@@ -4,6 +4,8 @@ import (
 	"net"
 
 	"github.com/pkg/errors"
+
+	"github.com/onmetal/inventory/pkg/redis"
 )
 
 func idBytesToMac(id []byte) (string, error) {
@@ -26,4 +28,12 @@ func idBytesToNetworkAddress(id []byte) (string, error) {
 	}
 	ip := net.IP(id[1:])
 	return ip.String(), nil
+}
+
+func convertFromRedisData(redisFrames []redis.Frame) []Frame {
+	result := make([]Frame, 0, len(redisFrames))
+	for _, f := range redisFrames {
+		result = append(result, Frame(f))
+	}
+	return result
 }

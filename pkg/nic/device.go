@@ -113,6 +113,8 @@ type Device struct {
 	Testing             bool
 	TransmitQueueLength uint32
 	Type                Type
+	Lanes               uint8
+	FEC                 string
 }
 
 func (n *Device) defPCIAddress(thePath string) error {

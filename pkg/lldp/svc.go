@@ -8,6 +8,7 @@ import (
 
 	"github.com/onmetal/inventory/pkg/host"
 	"github.com/onmetal/inventory/pkg/printer"
+	"github.com/onmetal/inventory/pkg/redis"
 	"github.com/onmetal/inventory/pkg/utils"
 )
 
@@ -19,11 +20,11 @@ type Svc struct {
 	printer      *printer.Svc
 	frameInfoSvc *FrameSvc
 	hostSvc      *host.Svc
-	redisSvc     *RedisSvc
+	redisSvc     *redis.Svc
 	lldpPath     string
 }
 
-func NewSvc(printer *printer.Svc, frameInfoSvc *FrameSvc, hostSvc *host.Svc, redisSvc *RedisSvc, basePath string) *Svc {
+func NewSvc(printer *printer.Svc, frameInfoSvc *FrameSvc, hostSvc *host.Svc, redisSvc *redis.Svc, basePath string) *Svc {
 	return &Svc{
 		printer:      printer,
 		frameInfoSvc: frameInfoSvc,
@@ -63,7 +64,7 @@ func (s *Svc) GetData() ([]Frame, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to process redis lldp data")
 		}
-		frameInfos = append(frameInfos, frames...)
+		frameInfos = append(frameInfos, convertFromRedisData(frames)...)
 	}
 	return frameInfos, nil
 }

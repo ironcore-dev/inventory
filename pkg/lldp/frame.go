@@ -8,6 +8,8 @@ import (
 
 	"github.com/mdlayher/lldp"
 	"github.com/pkg/errors"
+
+	"github.com/onmetal/inventory/pkg/utils"
 )
 
 type Frame struct {
@@ -15,8 +17,8 @@ type Frame struct {
 	ChassisID           string
 	SystemName          string
 	SystemDescription   string
-	Capabilities        []Capability
-	EnabledCapabilities []Capability
+	Capabilities        []utils.Capability
+	EnabledCapabilities []utils.Capability
 	PortID              string
 	PortDescription     string
 	ManagementAddresses []string
@@ -124,7 +126,7 @@ func (f *Frame) setSystemCapability(val []byte) {
 	capabilities := binary.BigEndian.Uint16(val[0:2])
 	enabledCapabilities := binary.BigEndian.Uint16(val[2:4])
 
-	for i, capability := range CCapabilities {
+	for i, capability := range utils.CCapabilities {
 		idx := uint16(1 << i)
 		capable := capabilities & idx
 		if capable != 0 {
@@ -138,17 +140,17 @@ func (f *Frame) setSystemCapability(val []byte) {
 	}
 }
 
-func (f *Frame) addCapability(capability Capability) {
+func (f *Frame) addCapability(capability utils.Capability) {
 	if f.Capabilities == nil {
-		f.Capabilities = make([]Capability, 0)
+		f.Capabilities = make([]utils.Capability, 0)
 	}
 
 	f.Capabilities = append(f.Capabilities, capability)
 }
 
-func (f *Frame) addEnabledCapability(capability Capability) {
+func (f *Frame) addEnabledCapability(capability utils.Capability) {
 	if f.EnabledCapabilities == nil {
-		f.EnabledCapabilities = make([]Capability, 0)
+		f.EnabledCapabilities = make([]utils.Capability, 0)
 	}
 
 	f.EnabledCapabilities = append(f.EnabledCapabilities, capability)

@@ -22,6 +22,7 @@ import (
 	"github.com/onmetal/inventory/pkg/numa"
 	"github.com/onmetal/inventory/pkg/pci"
 	"github.com/onmetal/inventory/pkg/printer"
+	"github.com/onmetal/inventory/pkg/redis"
 	"github.com/onmetal/inventory/pkg/virt"
 )
 
@@ -88,12 +89,12 @@ func NewSvc() (*Svc, int) {
 
 	hostSvc := host.NewSvc(p, f.Root)
 
-	redisSvc := lldp.NewRedisSvc(f.Root)
+	redisSvc := redis.NewRedisSvc(f.Root)
 	lldpFrameInfoSvc := lldp.NewFrameSvc(p)
 	lldpSvc := lldp.NewSvc(p, lldpFrameInfoSvc, hostSvc, redisSvc, f.Root)
 
 	nicDevSvc := nic.NewDeviceSvc(p)
-	nicSvc := nic.NewSvc(p, nicDevSvc, f.Root)
+	nicSvc := nic.NewSvc(p, nicDevSvc, hostSvc, redisSvc, f.Root)
 
 	ipmiDevInfoSvc := ipmi.NewDeviceSvc(p)
 	ipmiSvc := ipmi.NewSvc(p, ipmiDevInfoSvc, f.Root)
