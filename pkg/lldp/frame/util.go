@@ -1,4 +1,4 @@
-package lldpFrame
+package frame
 
 import (
 	"net"

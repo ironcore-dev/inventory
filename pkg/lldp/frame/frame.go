@@ -1,4 +1,4 @@
-package lldpFrame
+package frame
 
 import (
 	"encoding/binary"
@@ -8,21 +8,49 @@ import (
 
 	"github.com/mdlayher/lldp"
 	"github.com/pkg/errors"
-
-	"github.com/onmetal/inventory/pkg/utils"
 )
+
+type Capability string
 
 type Frame struct {
 	InterfaceID         string
 	ChassisID           string
 	SystemName          string
 	SystemDescription   string
-	Capabilities        []utils.Capability
-	EnabledCapabilities []utils.Capability
+	Capabilities        []Capability
+	EnabledCapabilities []Capability
 	PortID              string
 	PortDescription     string
 	ManagementAddresses []string
 	TTL                 time.Duration
+}
+
+const (
+	CLLDPOtherCapability             = "Other"
+	CLLDPRepeaterCapability          = "Repeater"
+	CLLDPBridgeCapability            = "Bridge"
+	CLLDPWLANAccessPointCapability   = "WLAN Access Point"
+	CLLDPRouterCapability            = "Router"
+	CLLDPTelephoneCapability         = "Telephone"
+	CLLDPDOCSISCableDeviceCapability = "DOCSIS cable device"
+	CLLDPStationCapability           = "Station"
+	CLLDPCustomerVLANCapability      = "Customer VLAN"
+	CLLDPServiceVLANCapability       = "Service VLAN"
+	CLLDPTwoPortMACRelayCapability   = "Two-port MAC Relay (TPMR)"
+)
+
+var CCapabilities = []Capability{
+	CLLDPOtherCapability,
+	CLLDPRepeaterCapability,
+	CLLDPBridgeCapability,
+	CLLDPWLANAccessPointCapability,
+	CLLDPRouterCapability,
+	CLLDPTelephoneCapability,
+	CLLDPDOCSISCableDeviceCapability,
+	CLLDPStationCapability,
+	CLLDPCustomerVLANCapability,
+	CLLDPServiceVLANCapability,
+	CLLDPTwoPortMACRelayCapability,
 }
 
 func (f *Frame) setChassisID(chassisID *lldp.ChassisID) error {
@@ -126,7 +154,7 @@ func (f *Frame) setSystemCapability(val []byte) {
 	capabilities := binary.BigEndian.Uint16(val[0:2])
 	enabledCapabilities := binary.BigEndian.Uint16(val[2:4])
 
-	for i, capability := range utils.CCapabilities {
+	for i, capability := range CCapabilities {
 		idx := uint16(1 << i)
 		capable := capabilities & idx
 		if capable != 0 {
@@ -140,17 +168,17 @@ func (f *Frame) setSystemCapability(val []byte) {
 	}
 }
 
-func (f *Frame) addCapability(capability utils.Capability) {
+func (f *Frame) addCapability(capability Capability) {
 	if f.Capabilities == nil {
-		f.Capabilities = make([]utils.Capability, 0)
+		f.Capabilities = make([]Capability, 0)
 	}
 
 	f.Capabilities = append(f.Capabilities, capability)
 }
 
-func (f *Frame) addEnabledCapability(capability utils.Capability) {
+func (f *Frame) addEnabledCapability(capability Capability) {
 	if f.EnabledCapabilities == nil {
-		f.EnabledCapabilities = make([]utils.Capability, 0)
+		f.EnabledCapabilities = make([]Capability, 0)
 	}
 
 	f.EnabledCapabilities = append(f.EnabledCapabilities, capability)

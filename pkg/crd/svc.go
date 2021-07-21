@@ -17,6 +17,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 
 	"github.com/onmetal/inventory/pkg/inventory"
+	"github.com/onmetal/inventory/pkg/lldp/frame"
 	"github.com/onmetal/inventory/pkg/netlink"
 	"github.com/onmetal/inventory/pkg/utils"
 )
@@ -336,10 +337,10 @@ func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	}
 
 	lldpMap := make(map[int][]apiv1alpha1.LLDPSpec)
-	for _, frame := range inv.LLDPFrames {
-		checkMap := make(map[utils.Capability]struct{})
+	for _, f := range inv.LLDPFrames {
+		checkMap := make(map[frame.Capability]struct{})
 		enabledCapabilities := make([]apiv1alpha1.LLDPCapabilities, 0)
-		for _, capability := range frame.EnabledCapabilities {
+		for _, capability := range f.EnabledCapabilities {
 			if _, ok := checkMap[capability]; !ok {
 				enabledCapabilities = append(enabledCapabilities, apiv1alpha1.LLDPCapabilities(capability))
 				checkMap[capability] = struct{}{}
@@ -348,13 +349,13 @@ func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 		sort.Slice(enabledCapabilities, func(i, j int) bool {
 			return enabledCapabilities[i] < enabledCapabilities[j]
 		})
-		id, _ := strconv.Atoi(frame.InterfaceID)
+		id, _ := strconv.Atoi(f.InterfaceID)
 		l := apiv1alpha1.LLDPSpec{
-			ChassisID:         frame.ChassisID,
-			SystemName:        frame.SystemName,
-			SystemDescription: frame.SystemDescription,
-			PortID:            frame.PortID,
-			PortDescription:   frame.PortDescription,
+			ChassisID:         f.ChassisID,
+			SystemName:        f.SystemName,
+			SystemDescription: f.SystemDescription,
+			PortID:            f.PortID,
+			PortDescription:   f.PortDescription,
 			Capabilities:      enabledCapabilities,
 		}
 

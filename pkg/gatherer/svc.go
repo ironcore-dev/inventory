@@ -16,7 +16,7 @@ import (
 	"github.com/onmetal/inventory/pkg/inventory"
 	"github.com/onmetal/inventory/pkg/ipmi"
 	"github.com/onmetal/inventory/pkg/lldp"
-	"github.com/onmetal/inventory/pkg/lldpFrame"
+	frame2 "github.com/onmetal/inventory/pkg/lldp/frame"
 	"github.com/onmetal/inventory/pkg/mem"
 	"github.com/onmetal/inventory/pkg/netlink"
 	"github.com/onmetal/inventory/pkg/nic"
@@ -91,7 +91,7 @@ func NewSvc() (*Svc, int) {
 	hostSvc := host.NewSvc(p, f.Root)
 
 	redisSvc := redis.NewRedisSvc(f.Root)
-	lldpFrameInfoSvc := lldpFrame.NewFrameSvc(p)
+	lldpFrameInfoSvc := frame2.NewFrameSvc(p)
 	lldpSvc := lldp.NewSvc(p, lldpFrameInfoSvc, hostSvc, redisSvc, f.Root)
 
 	nicDevSvc := nic.NewDeviceSvc(p)

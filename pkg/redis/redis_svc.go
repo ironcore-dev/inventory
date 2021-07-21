@@ -11,8 +11,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/onmetal/inventory/pkg/file"
-	"github.com/onmetal/inventory/pkg/lldpFrame"
-	"github.com/onmetal/inventory/pkg/utils"
+	"github.com/onmetal/inventory/pkg/lldp/frame"
 )
 
 const (
@@ -74,18 +73,18 @@ func NewRedisSvc(basePath string) *Svc {
 	}
 }
 
-func (s *Svc) GetFrames() ([]lldpFrame.Frame, error) {
-	frames := make([]lldpFrame.Frame, 0)
+func (s *Svc) GetFrames() ([]frame.Frame, error) {
+	frames := make([]frame.Frame, 0)
 	lldpKeys, err := s.getKeysByPattern(CLLDPEntryKeyMask)
 	if err != nil {
 		return nil, err
 	}
 	for _, key := range lldpKeys {
-		frame, err := s.processRedisPortData(key)
+		f, err := s.processRedisPortData(key)
 		if err != nil {
 			return nil, err
 		}
-		frames = append(frames, *frame)
+		frames = append(frames, *f)
 	}
 	return frames, nil
 }
@@ -130,7 +129,7 @@ func (s *Svc) getValuesFromHashEntry(key string, fields *[]string) (map[string]s
 	return result, nil
 }
 
-func (s *Svc) processRedisPortData(key string) (*lldpFrame.Frame, error) {
+func (s *Svc) processRedisPortData(key string) (*frame.Frame, error) {
 	port := strings.Split(key, ":")
 	filePath := path.Join(s.indexPath, port[1], CIndexFile)
 	fileVal, err := file.ToString(filePath)
@@ -150,7 +149,7 @@ func (s *Svc) processRedisPortData(key string) (*lldpFrame.Frame, error) {
 		return nil, errors.Wrap(err, "unable to decode enabled capabilities for remote interface")
 	}
 
-	frame := &lldpFrame.Frame{
+	f := &frame.Frame{
 		InterfaceID:         fileVal,
 		ChassisID:           rawData[CLLDPRemoteChassisId],
 		SystemName:          rawData[CLLDPRemoteSystemName],
@@ -162,7 +161,7 @@ func (s *Svc) processRedisPortData(key string) (*lldpFrame.Frame, error) {
 		ManagementAddresses: strings.Split(rawData[CLLDPRemoteManagementAddresses], ","),
 		TTL:                 0,
 	}
-	return frame, nil
+	return f, nil
 }
 
 func getBitsList(num uint8) []int {
@@ -177,8 +176,8 @@ func getBitsList(num uint8) []int {
 	return bitsList
 }
 
-func getCapabilities(caps string) ([]utils.Capability, error) {
-	capabilities := make([]utils.Capability, 0)
+func getCapabilities(caps string) ([]frame.Capability, error) {
+	capabilities := make([]frame.Capability, 0)
 	for _, i := range strings.Split(caps, " ") {
 		if i == "00" || i == "" {
 			continue
@@ -186,7 +185,7 @@ func getCapabilities(caps string) ([]utils.Capability, error) {
 		if parsed, err := strconv.ParseUint(i, 16, 8); err == nil {
 			bitsList := getBitsList(uint8(parsed))
 			for _, v := range bitsList {
-				capabilities = append(capabilities, utils.CCapabilities[v])
+				capabilities = append(capabilities, frame.CCapabilities[v])
 			}
 		} else {
 			return nil, err

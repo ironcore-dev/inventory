@@ -1,4 +1,4 @@
-package lldpFrame
+package frame
 
 import (
 	"io/ioutil"
@@ -9,17 +9,17 @@ import (
 	"github.com/onmetal/inventory/pkg/printer"
 )
 
-type FrameSvc struct {
+type Svc struct {
 	printer *printer.Svc
 }
 
-func NewFrameSvc(printer *printer.Svc) *FrameSvc {
-	return &FrameSvc{
+func NewFrameSvc(printer *printer.Svc) *Svc {
+	return &Svc{
 		printer: printer,
 	}
 }
 
-func (s *FrameSvc) GetFrame(interfaceID string, thePath string) (*Frame, error) {
+func (s *Svc) GetFrame(interfaceID string, thePath string) (*Frame, error) {
 	contents, err := ioutil.ReadFile(thePath)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to read file %s", thePath)
