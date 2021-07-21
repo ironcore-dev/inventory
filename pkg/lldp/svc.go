@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/onmetal/inventory/pkg/host"
+	"github.com/onmetal/inventory/pkg/lldpFrame"
 	"github.com/onmetal/inventory/pkg/printer"
 	"github.com/onmetal/inventory/pkg/redis"
 	"github.com/onmetal/inventory/pkg/utils"
@@ -18,13 +19,13 @@ const (
 
 type Svc struct {
 	printer      *printer.Svc
-	frameInfoSvc *FrameSvc
+	frameInfoSvc *lldpFrame.FrameSvc
 	hostSvc      *host.Svc
 	redisSvc     *redis.Svc
 	lldpPath     string
 }
 
-func NewSvc(printer *printer.Svc, frameInfoSvc *FrameSvc, hostSvc *host.Svc, redisSvc *redis.Svc, basePath string) *Svc {
+func NewSvc(printer *printer.Svc, frameInfoSvc *lldpFrame.FrameSvc, hostSvc *host.Svc, redisSvc *redis.Svc, basePath string) *Svc {
 	return &Svc{
 		printer:      printer,
 		frameInfoSvc: frameInfoSvc,
@@ -34,8 +35,8 @@ func NewSvc(printer *printer.Svc, frameInfoSvc *FrameSvc, hostSvc *host.Svc, red
 	}
 }
 
-func (s *Svc) GetData() ([]Frame, error) {
-	frameInfos := make([]Frame, 0)
+func (s *Svc) GetData() ([]lldpFrame.Frame, error) {
+	frameInfos := make([]lldpFrame.Frame, 0)
 
 	hostInfo, err := s.hostSvc.GetData()
 	if err != nil {
@@ -64,7 +65,7 @@ func (s *Svc) GetData() ([]Frame, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to process redis lldp data")
 		}
-		frameInfos = append(frameInfos, convertFromRedisData(frames)...)
+		frameInfos = append(frameInfos, frames...)
 	}
 	return frameInfos, nil
 }

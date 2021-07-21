@@ -6,13 +6,12 @@ import (
 	"path"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
 
 	"github.com/onmetal/inventory/pkg/file"
-	//"github.com/onmetal/inventory/pkg/lldp"
+	"github.com/onmetal/inventory/pkg/lldpFrame"
 	"github.com/onmetal/inventory/pkg/utils"
 )
 
@@ -57,21 +56,6 @@ var CRedisPortFields = []string{
 	CPortSpeed,
 }
 
-// Frame duplicates struct from lldp
-// to avoid cycled imports
-type Frame struct {
-	InterfaceID         string
-	ChassisID           string
-	SystemName          string
-	SystemDescription   string
-	Capabilities        []utils.Capability
-	EnabledCapabilities []utils.Capability
-	PortID              string
-	PortDescription     string
-	ManagementAddresses []string
-	TTL                 time.Duration
-}
-
 type Svc struct {
 	client    *redis.Client
 	ctx       context.Context
@@ -90,8 +74,8 @@ func NewRedisSvc(basePath string) *Svc {
 	}
 }
 
-func (s *Svc) GetFrames() ([]Frame, error) {
-	frames := make([]Frame, 0)
+func (s *Svc) GetFrames() ([]lldpFrame.Frame, error) {
+	frames := make([]lldpFrame.Frame, 0)
 	lldpKeys, err := s.getKeysByPattern(CLLDPEntryKeyMask)
 	if err != nil {
 		return nil, err
@@ -146,7 +130,7 @@ func (s *Svc) getValuesFromHashEntry(key string, fields *[]string) (map[string]s
 	return result, nil
 }
 
-func (s *Svc) processRedisPortData(key string) (*Frame, error) {
+func (s *Svc) processRedisPortData(key string) (*lldpFrame.Frame, error) {
 	port := strings.Split(key, ":")
 	filePath := path.Join(s.indexPath, port[1], CIndexFile)
 	fileVal, err := file.ToString(filePath)
@@ -166,7 +150,7 @@ func (s *Svc) processRedisPortData(key string) (*Frame, error) {
 		return nil, errors.Wrap(err, "unable to decode enabled capabilities for remote interface")
 	}
 
-	frame := &Frame{
+	frame := &lldpFrame.Frame{
 		InterfaceID:         fileVal,
 		ChassisID:           rawData[CLLDPRemoteChassisId],
 		SystemName:          rawData[CLLDPRemoteSystemName],

@@ -1,4 +1,4 @@
-package lldp
+package lldpFrame
 
 import (
 	"io/ioutil"
