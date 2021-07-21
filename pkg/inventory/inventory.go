@@ -7,7 +7,7 @@ import (
 	"github.com/onmetal/inventory/pkg/dmi"
 	"github.com/onmetal/inventory/pkg/host"
 	"github.com/onmetal/inventory/pkg/ipmi"
-	frame2 "github.com/onmetal/inventory/pkg/lldp/frame"
+	"github.com/onmetal/inventory/pkg/lldp/frame"
 	"github.com/onmetal/inventory/pkg/mem"
 	"github.com/onmetal/inventory/pkg/netlink"
 	"github.com/onmetal/inventory/pkg/nic"
@@ -25,7 +25,7 @@ type Inventory struct {
 	PCIBusDevices  []pci.Bus
 	IPMIDevices    []ipmi.Device
 	NICs           []nic.Device
-	LLDPFrames     []frame2.Frame
+	LLDPFrames     []frame.Frame
 	NDPFrames      []netlink.IPv6Neighbour
 	Virtualization *virt.Virtualization
 	Host           *host.Info
