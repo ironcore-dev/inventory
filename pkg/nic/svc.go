@@ -46,7 +46,6 @@ func (s *Svc) GetData() ([]Device, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to get list of nic folders")
 	}
-
 	var nics []Device
 	for _, nicFolder := range nicFolders {
 		fName := nicFolder.Name()
@@ -54,6 +53,9 @@ func (s *Svc) GetData() ([]Device, error) {
 		nic, err := s.nicDevSvc.GetDevice(thePath, fName)
 		if err != nil {
 			s.printer.VErr(errors.Wrap(err, "unable to collect Device data"))
+			continue
+		}
+		if !s.isValidInterface(nic.Name) {
 			continue
 		}
 		if hostInfo.Type == utils.CSwitchType && strings.HasPrefix(fName, "Ethernet") {
@@ -75,4 +77,17 @@ func (s *Svc) GetData() ([]Device, error) {
 	}
 
 	return nics, nil
+}
+
+func (s *Svc) isValidInterface(name string) bool {
+	switch {
+	case strings.Contains(name, "docker"):
+		return false
+	case strings.Contains(name, "lo"):
+		return false
+	case strings.Contains(name, "enx"):
+		return false
+	default:
+		return true
+	}
 }
