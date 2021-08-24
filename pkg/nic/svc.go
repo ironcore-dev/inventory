@@ -85,8 +85,6 @@ func (s *Svc) isValidInterface(name string) bool {
 		return false
 	case strings.Contains(name, "lo"):
 		return false
-	case strings.Contains(name, "enx"):
-		return false
 	default:
 		return true
 	}
