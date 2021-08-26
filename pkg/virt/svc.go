@@ -273,19 +273,24 @@ func (s *Svc) getType() (Type, error) {
 func (s *Svc) checkVMWithDMI() Type {
 	dmiData, _ := s.dmiSvc.GetData()
 
-	vendorLocators := []string{
-		dmiData.SystemInformation.ProductName,
-		dmiData.SystemInformation.Manufacturer,
-		dmiData.BIOSInformation.Vendor,
-	}
-	for _, board := range dmiData.BoardInformation {
-		vendorLocators = append(vendorLocators, board.Manufacturer)
-	}
+	if dmiData != nil {
+		var vendorLocators []string
+		if dmiData.SystemInformation != nil {
+			vendorLocators = append(vendorLocators, dmiData.SystemInformation.ProductName, dmiData.SystemInformation.Manufacturer)
+		}
+		if dmiData.BIOSInformation != nil {
+			vendorLocators = append(vendorLocators, dmiData.BIOSInformation.Vendor)
+		}
 
-	for _, vendorLocator := range vendorLocators {
-		for k, v := range CDMIVendorPrefixes {
-			if strings.HasPrefix(vendorLocator, k) {
-				return v
+		for _, board := range dmiData.BoardInformation {
+			vendorLocators = append(vendorLocators, board.Manufacturer)
+		}
+
+		for _, vendorLocator := range vendorLocators {
+			for k, v := range CDMIVendorPrefixes {
+				if strings.HasPrefix(vendorLocator, k) {
+					return v
+				}
 			}
 		}
 	}
