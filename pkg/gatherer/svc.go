@@ -35,7 +35,7 @@ const (
 type Svc struct {
 	printer *printer.Svc
 
-	crdSvc *crd.Svc
+	crdSvc crd.Builder
 
 	dmiSvc     *dmi.Svc
 	numaSvc    *numa.Svc
@@ -57,10 +57,16 @@ func NewSvc() (*Svc, int) {
 
 	p := printer.NewSvc(f.Verbose)
 
-	crdSvc, err := crd.NewSvc(f.Kubeconfig, f.KubeNamespace)
-	if err != nil {
-		p.Err(errors.Wrapf(err, "unable to create k8s resorce svc"))
-		return nil, CErrRetCode
+	var crdSvc crd.Builder
+	if f.HTTPClient {
+		crdSvc = crd.NewHttpCreator(f.Timeout, f.Host)
+	} else {
+		var err error
+		crdSvc, err = crd.NewSvc(f.Kubeconfig, f.KubeNamespace)
+		if err != nil {
+			p.Err(errors.Wrapf(err, "unable to create k8s resorce svc"))
+			return nil, CErrRetCode
+		}
 	}
 
 	pciIDs, err := pci.NewIDs()

@@ -27,11 +27,15 @@ const (
 	CSonicNamespace        = "switch.onmetal.de"
 )
 
-type Svc struct {
+type Builder interface {
+	BuildAndSave(inv *inventory.Inventory) error
+}
+
+type Kubernetes struct {
 	client clientv1alpha1.InventoryInterface
 }
 
-func NewSvc(kubeconfig string, namespace string) (*Svc, error) {
+func NewSvc(kubeconfig string, namespace string) (Builder, error) {
 	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to read kubeconfig from path %s", kubeconfig)
@@ -48,12 +52,12 @@ func NewSvc(kubeconfig string, namespace string) (*Svc, error) {
 
 	client := clientset.Inventories(namespace)
 
-	return &Svc{
+	return &Kubernetes{
 		client: client,
 	}, nil
 }
 
-func (s *Svc) BuildAndSave(inv *inventory.Inventory) error {
+func (s *Kubernetes) BuildAndSave(inv *inventory.Inventory) error {
 	cr, err := s.Build(inv)
 	if err != nil {
 		return errors.Wrap(err, "unable to build inventory resource manifest")
@@ -66,7 +70,7 @@ func (s *Svc) BuildAndSave(inv *inventory.Inventory) error {
 	return nil
 }
 
-func (s *Svc) Build(inv *inventory.Inventory) (*apiv1alpha1.Inventory, error) {
+func (s *Kubernetes) Build(inv *inventory.Inventory) (*apiv1alpha1.Inventory, error) {
 	cr := &apiv1alpha1.Inventory{
 		ObjectMeta: metav1.ObjectMeta{},
 		Spec:       apiv1alpha1.InventorySpec{},
@@ -91,7 +95,7 @@ func (s *Svc) Build(inv *inventory.Inventory) (*apiv1alpha1.Inventory, error) {
 	return cr, nil
 }
 
-func (s *Svc) Save(inv *apiv1alpha1.Inventory) error {
+func (s *Kubernetes) Save(inv *apiv1alpha1.Inventory) error {
 	_, err := s.client.Create(context.Background(), inv, metav1.CreateOptions{})
 	if err == nil {
 		return nil
@@ -122,7 +126,7 @@ func (s *Svc) Save(inv *apiv1alpha1.Inventory) error {
 	return nil
 }
 
-func (s *Svc) setSystem(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
+func (s *Kubernetes) setSystem(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	if inv.DMI == nil {
 		return
 	}
@@ -152,7 +156,7 @@ func (s *Svc) setSystem(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	}
 }
 
-func (s *Svc) setIPMIs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
+func (s *Kubernetes) setIPMIs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	ipmiDevCount := len(inv.IPMIDevices)
 	if ipmiDevCount == 0 {
 		return
@@ -178,7 +182,7 @@ func (s *Svc) setIPMIs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	cr.Spec.IPMIs = ipmis
 }
 
-func (s *Svc) setBlocks(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
+func (s *Kubernetes) setBlocks(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	if len(inv.BlockDevices) == 0 {
 		return
 	}
@@ -247,7 +251,7 @@ func (s *Svc) setBlocks(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	}
 }
 
-func (s *Svc) setMemory(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
+func (s *Kubernetes) setMemory(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	if inv.MemInfo == nil {
 		return
 	}
@@ -257,7 +261,7 @@ func (s *Svc) setMemory(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	}
 }
 
-func (s *Svc) setCPUs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
+func (s *Kubernetes) setCPUs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	if len(inv.CPUInfo) == 0 {
 		return
 	}
@@ -327,7 +331,7 @@ func (s *Svc) setCPUs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	cr.Spec.CPUs = cpuTotal
 }
 
-func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
+func (s *Kubernetes) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	if len(inv.NICs) == 0 {
 		return
 	}
@@ -448,7 +452,7 @@ func (s *Svc) setNICs(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	}
 }
 
-func (s *Svc) setVirt(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
+func (s *Kubernetes) setVirt(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	if inv.Virtualization == nil {
 		return
 	}
@@ -458,7 +462,7 @@ func (s *Svc) setVirt(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	}
 }
 
-func (s *Svc) setHost(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
+func (s *Kubernetes) setHost(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	if inv.Host == nil {
 		return
 	}
@@ -468,7 +472,7 @@ func (s *Svc) setHost(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	}
 }
 
-func (s *Svc) setDistro(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
+func (s *Kubernetes) setDistro(cr *apiv1alpha1.Inventory, inv *inventory.Inventory) {
 	if inv.Distro == nil {
 		return
 	}
