@@ -35,7 +35,7 @@ const (
 type Svc struct {
 	printer *printer.Svc
 
-	crdSvc crd.Builder
+	crdClient crd.Client
 
 	dmiSvc     *dmi.Svc
 	numaSvc    *numa.Svc
@@ -57,16 +57,10 @@ func NewSvc() (*Svc, int) {
 
 	p := printer.NewSvc(f.Verbose)
 
-	var crdSvc crd.Builder
-	if f.HTTPClient {
-		crdSvc = crd.NewHttpCreator(f.Timeout, f.Host)
-	} else {
-		var err error
-		crdSvc, err = crd.NewSvc(f.Kubeconfig, f.KubeNamespace)
-		if err != nil {
-			p.Err(errors.Wrapf(err, "unable to create k8s resorce svc"))
-			return nil, CErrRetCode
-		}
+	crdClient, err := crd.NewClient(f)
+	if err != nil {
+		p.Err(errors.Wrapf(err, "unable to create client"))
+		return nil, CErrRetCode
 	}
 
 	pciIDs, err := pci.NewIDs()
@@ -114,7 +108,7 @@ func NewSvc() (*Svc, int) {
 
 	return &Svc{
 		printer:    p,
-		crdSvc:     crdSvc,
+		crdClient:  crdClient,
 		dmiSvc:     dmiSvc,
 		numaSvc:    numaSvc,
 		blockSvc:   blockSvc,
@@ -170,7 +164,7 @@ func (s *Svc) Gather() int {
 	s.printer.VOut("Gathered data:")
 	s.printer.VOut(prettifiedJsonBuf.String())
 
-	if err := s.crdSvc.BuildAndSave(inv); err != nil {
+	if err := s.crdClient.BuildAndSave(inv); err != nil {
 		s.printer.Err(errors.Wrap(err, "unable to save inventory resource"))
 		return CErrRetCode
 	}
