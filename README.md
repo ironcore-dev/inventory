@@ -22,9 +22,12 @@ This will produce a `./dist` directory with all required files.
 
 ### Run
 
-To execute, simply run  
+To execute, simply run
 
     sudo ./dist/inventory
+
+| This will not work inside the WSL2 machine due to bug [#6874](https://github.com/microsoft/WSL/issues/6874) |
+| --- |
 
 Program uses machine's DMI interface and ioctl, so it requires additional privileges.
 
