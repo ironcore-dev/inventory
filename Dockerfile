@@ -1,22 +1,18 @@
 FROM golang:1.15.6 as builder
 
+ARG GOPRIVATE
+
 WORKDIR /build
 COPY go.mod go.mod
 COPY go.sum go.sum
 
-ARG GOPRIVATE
-ARG GIT_USER
-ARG GIT_PASSWORD
-RUN if [ ! -z "$GIT_USER" ] && [ ! -z "$GIT_PASSWORD" ]; then \
-        printf "machine github.com\n \
-            login ${GIT_USER}\n \
-            password ${GIT_PASSWORD}\n \
-            \nmachine api.github.com\n \
-            login ${GIT_USER}\n \
-            password ${GIT_PASSWORD}\n" \
-            >> ${HOME}/.netrc;\
-    fi
-RUN go mod download
+COPY hack/ hack/
+# cache deps before building and copying source so that we don't need to re-download as much
+# and so that source changes don't invalidate our downloaded layer
+RUN --mount=type=ssh --mount=type=secret,id=github_pat GITHUB_PAT_PATH=/run/secrets/github_pat ./hack/setup-git-redirect.sh \
+  && mkdir -p -m 0600 ~/.ssh \
+  && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts \
+  && go mod download
 
 COPY cmd/ cmd/
 COPY pkg/ pkg/
