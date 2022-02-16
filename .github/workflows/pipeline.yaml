@@ -44,7 +44,7 @@ jobs:
           args: -e S1008
 
   docker-build:
-    needs: [ kustomize-test, go-lint, go-test ]
+    needs: [ go-lint ]
     runs-on: [ self-hosted, Linux, X64 ]
     steps:
       - name: Checkout
