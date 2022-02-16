@@ -43,38 +43,6 @@ jobs:
           version: v1.43
           args: -e S1008
 
-  go-test:
-    runs-on: [ self-hosted, Linux, X64 ]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup golang
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.17
-      
-      - name: Configure git for private modules
-        run: ./hack/setup-git-redirect.sh
-        env:
-          GITHUB_PAT: ${{ secrets.BOT_PAT }}
-
-      - name: Run tests
-        run: make test
-
-  kustomize-test:
-    runs-on: [ self-hosted, Linux, X64 ]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Complie manifests
-        uses: azure/k8s-bake@v1
-        with:
-          renderEngine: 'kustomize'
-          kustomizationPath: './config/default/'
-          kubectl-version: 'latest'
-          silent: 'false'
-
   docker-build:
     needs: [ kustomize-test, go-lint, go-test ]
     runs-on: [ self-hosted, Linux, X64 ]
