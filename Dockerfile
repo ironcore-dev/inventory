@@ -1,4 +1,4 @@
-FROM golang:1.15.6 as builder
+FROM golang:1.17 as builder
 
 ARG GOPRIVATE
 
@@ -15,6 +15,7 @@ RUN --mount=type=ssh --mount=type=secret,id=github_pat GITHUB_PAT_PATH=/run/secr
   && go mod download
 
 COPY cmd/ cmd/
+COPY internal/ internal/
 COPY pkg/ pkg/
 COPY res/ res/
 
