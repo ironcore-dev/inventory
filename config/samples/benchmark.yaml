@@ -1,0 +1,18 @@
+apiVersion: benchmark.onmetal.de/v1alpha3
+kind: Machine
+metadata:
+  name: e8dee8c0-4984-11ea-af8b-0a94efa9371d
+spec:
+  benchmarks:
+    nvme0n1:
+    - name: disk-1024k
+      value: 52494860288
+    - name: disk-4k
+      value: 16666513408
+status:
+  machine_deviation:
+    nvme0n1:
+    - name: disk-1024k
+      value: -14.5%
+    - name: disk-4k
+      value: +30.0%
