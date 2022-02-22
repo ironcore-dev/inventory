@@ -25,6 +25,7 @@ func TestPatch(t *testing.T) {
 		contains(t, req.URL.String(), "/apis/v1alpha3/benchmark/onmetal/test")
 		// Send response to be tested
 		rw.Header().Set("Content-Type", "application/json")
+		//nolint:errcheck
 		rw.Write([]byte(`OK`))
 	}))
 
