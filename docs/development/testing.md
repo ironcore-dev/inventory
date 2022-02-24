@@ -4,7 +4,7 @@
 go test -race ./...
 ```
 
-Some tests require sudo. For example
+Some test requires sudo. For example
 ```shell
 worker_test.go:26: can't get user info or user is not a root:
 ```

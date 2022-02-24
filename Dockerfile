@@ -24,11 +24,17 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o bin/nic-
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o bin/benchmark cmd/benchmark/main.go
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o bin/benchmark-scheduler cmd/benchmark-scheduler/main.go
 
-FROM amd64/busybox:1.32.0
+FROM amd64/ubuntu:18.04
+
+ARG BENCHMARK_TOOLS="fio"
 
 WORKDIR /app
+
 COPY --from=builder /build/bin/inventory .
 COPY --from=builder /build/bin/nic-updater .
 COPY --from=builder /build/bin/benchmark .
 COPY --from=builder /build/bin/benchmark-scheduler .
 COPY --from=builder /build/res/pci.ids ./res/
+
+RUN apt -y update && \
+    apt -y install --no-install-recommends ${BENCHMARK_TOOLS}
