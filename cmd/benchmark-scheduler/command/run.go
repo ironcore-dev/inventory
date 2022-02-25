@@ -65,7 +65,7 @@ func (b *BenchOpts) run(cliCtx *cli.Context) error {
 	}
 	r := b.waitForResults(len(conf.Benchmarks))
 
-	return b.update(r, c, b.log, cliCtx)
+	return b.update(r, c, b.log)
 }
 
 func (b *BenchOpts) waitForResults(tasks int) []output.Result {
@@ -77,8 +77,8 @@ func (b *BenchOpts) waitForResults(tasks int) []output.Result {
 	return r
 }
 
-func (b *BenchOpts) update(r []output.Result, c provider.Client, l logger.Logger, cliCtx *cli.Context) error {
-	u, err := updater.New(b.machineUUID, r, c, l, cliCtx)
+func (b *BenchOpts) update(r []output.Result, c provider.Client, l logger.Logger) error {
+	u, err := updater.New(b.machineUUID, r, c, l)
 	if err != nil {
 		return err
 	}

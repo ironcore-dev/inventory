@@ -18,7 +18,7 @@ import (
 const defaultTimeoutSecond = 60
 
 const (
-	basePatchURL      = "apis/v1alpha3/benchmark/"
+	basePatchURL      = "apis/v1alpha3/benchmark"
 	getURL            = "apis/v1alpha3/benchmark"
 	getConfigURL      = "apis/v1alpha3/benchmark/config"
 	generateConfigURL = "apis/v1alpha3/benchmark/config/generate"
@@ -27,18 +27,22 @@ const (
 type httpClient struct {
 	*nethttp.Client
 
-	ctx     context.Context
-	log     logger.Logger
-	gateway string
+	ctx                context.Context
+	log                logger.Logger
+	gateway, namespace string
 }
 
-func newHTTP(ctx context.Context, l logger.Logger, gateway string) (Client, error) {
+func newHTTP(ctx context.Context, l logger.Logger, gateway, namespace string) (Client, error) {
+	if namespace == "" {
+		namespace = "default"
+	}
 	c := &nethttp.Client{Timeout: getClientTimeoutSecond()}
 	return &httpClient{
-		Client:  c,
-		gateway: gateway,
-		ctx:     ctx,
-		log:     l,
+		Client:    c,
+		gateway:   gateway,
+		namespace: namespace,
+		ctx:       ctx,
+		log:       l,
 	}, nil
 }
 
@@ -55,9 +59,8 @@ func getClientTimeoutSecond() time.Duration {
 	return time.Duration(timeout) * time.Second
 }
 
-func (s *httpClient) Patch(machineUUID, namespace string, body []byte) error {
-	patchURL := basePatchURL + namespace
-	req, err := s.prepareRequestWithBody(machineUUID, patchURL, nethttp.MethodPatch, body)
+func (s *httpClient) Patch(machineUUID string, body []byte) error {
+	req, err := s.prepareRequestWithBody(machineUUID, basePatchURL, nethttp.MethodPatch, body)
 	if err != nil {
 		return err
 	}
@@ -85,7 +88,7 @@ func (s *httpClient) Patch(machineUUID, namespace string, body []byte) error {
 func (s *httpClient) Get(uuid, kind string) ([]byte, error) {
 	switch kind {
 	case "benchmark":
-		req, err := s.prepareGetRequest(uuid, getURL, nethttp.MethodGet)
+		req, err := s.prepareRequestWithoutBody(uuid, getURL, nethttp.MethodGet)
 		if err != nil {
 			return nil, err
 		}
@@ -104,7 +107,7 @@ func (s *httpClient) Get(uuid, kind string) ([]byte, error) {
 		}
 		return io.ReadAll(resp.Body)
 	case "config":
-		req, err := s.prepareGetRequest(uuid, getConfigURL, nethttp.MethodPost)
+		req, err := s.prepareRequestWithoutBody(uuid, getConfigURL, nethttp.MethodPost)
 		if err != nil {
 			return nil, err
 		}
@@ -150,11 +153,11 @@ func (s *httpClient) GenerateConfig(machineUUID string, config []byte) ([]byte, 
 }
 
 func (s *httpClient) prepareRequestWithBody(machineUUID, url, method string, body []byte) (*nethttp.Request, error) {
-	uri := fmt.Sprintf("%s/%s/%s", s.gateway, url, machineUUID)
+	uri := fmt.Sprintf("%s/%s/%s/%s", s.gateway, url, s.namespace, machineUUID)
 	return nethttp.NewRequestWithContext(s.ctx, method, uri, bytes.NewBuffer(body))
 }
 
-func (s *httpClient) prepareGetRequest(machineUUID, url, method string) (*nethttp.Request, error) {
-	uri := fmt.Sprintf("%s/%s/%s", s.gateway, url, machineUUID)
+func (s *httpClient) prepareRequestWithoutBody(machineUUID, url, method string) (*nethttp.Request, error) {
+	uri := fmt.Sprintf("%s/%s/%s/%s", s.gateway, url, s.namespace, machineUUID)
 	return nethttp.NewRequestWithContext(s.ctx, method, uri, nethttp.NoBody)
 }

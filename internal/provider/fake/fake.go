@@ -12,7 +12,7 @@ func (f *fakeCrds) GenerateConfig(machineUUID string, config []byte) ([]byte, er
 	return nil, nil
 }
 
-func (f *fakeCrds) Patch(machineUUID, namespace string, patch []byte) error {
+func (f *fakeCrds) Patch(machineUUID string, patch []byte) error {
 	return nil
 }
 

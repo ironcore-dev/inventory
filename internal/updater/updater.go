@@ -11,7 +11,6 @@ import (
 	"github.com/onmetal/inventory/internal/benchmarks/output"
 	"github.com/onmetal/inventory/internal/provider"
 	benchv1alpha3 "github.com/onmetal/metal-api/apis/benchmark/v1alpha3"
-	"github.com/urfave/cli/v2"
 )
 
 const (
@@ -21,23 +20,22 @@ const (
 type Machine struct {
 	provider.Client
 
-	resultMap       map[string]benchv1alpha3.Benchmarks
-	uuid, namespace string
-	wg              *sync.WaitGroup
-	log             logger.Logger
-	results         []output.Result
+	resultMap map[string]benchv1alpha3.Benchmarks
+	uuid      string
+	wg        *sync.WaitGroup
+	log       logger.Logger
+	results   []output.Result
 }
 
 type Client interface {
 	Do() error
 }
 
-func New(machineUUID string, results []output.Result, c provider.Client, l logger.Logger, cliCtx *cli.Context) (*Machine, error) {
+func New(machineUUID string, results []output.Result, c provider.Client, l logger.Logger) (*Machine, error) {
 	return &Machine{
 		Client:    c,
 		wg:        new(sync.WaitGroup),
 		uuid:      machineUUID,
-		namespace: cliCtx.String("namespace"),
 		results:   results,
 		resultMap: make(map[string]benchv1alpha3.Benchmarks, len(results)),
 		log:       l,
@@ -79,8 +77,8 @@ func (m *Machine) Do() error {
 	if err != nil {
 		return err
 	}
-	m.log.Info("machine benchmark updating", "name", m.uuid, "namespace", m.namespace)
-	return m.Client.Patch(m.uuid, m.namespace, body)
+	m.log.Info("machine benchmark updating", "name", m.uuid)
+	return m.Client.Patch(m.uuid, body)
 }
 
 func (m *Machine) parseText(res *output.Result) uint64 {

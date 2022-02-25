@@ -32,7 +32,7 @@
 
     function inventorization() {
         echo "Inventarization process started"
-        CONTAINER_KUBECONFIG"--mount type=bind,src=${HOST_CONFIG},dst=${CONFIG},options=rbind:ro"
+        CONTAINER_KUBECONFIG="--mount type=bind,src=${HOST_CONFIG},dst=${CONFIG},options=rbind:ro"
         NAME="inventorization"
         ctr run -d --privileged --rm --net-host ${ROOT_VOL} ${CONTAINER_KUBECONFIG} ${IMG} ${NAME} /app/inventory -r ${ROOT} -k ${CONFIG} -n ${NAMESPACE} ${USER_VERBOSE}
     }
@@ -40,7 +40,7 @@
     function benchmarks() {
         echo "Benchmark process started"
         NAME="benchmarks"
-        ctr run --env ROOT=${ROOT} --env GATEWAY=${GATEWAY} -d --privileged --rm --net-host ${ROOT_VOL} ${IMG} ${NAME} /app/bench-scheduler run
+        ctr run --env ROOT=${ROOT} -d --privileged --rm --net-host ${ROOT_VOL} ${IMG} ${NAME} /app/bench-scheduler run -g ${GATEWAY} -n ${NAMESPACE}
     }
 
     function print_help() {

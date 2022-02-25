@@ -45,7 +45,7 @@ func TestPatch(t *testing.T) {
 	patch, err := json.Marshal(spec)
 	a.Nil(err, "json serialization failed")
 
-	a.Nil(h.Patch("test", "onmetal", patch), "object patch failed")
+	a.Nil(h.Patch("test", patch), "object patch failed")
 }
 
 func contains(tb testing.TB, exp, act interface{}) {

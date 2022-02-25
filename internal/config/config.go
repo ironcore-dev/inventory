@@ -29,7 +29,7 @@ import (
 )
 
 func New(machineUUID string, args *cli.Context, prv provider.Client, l logger.Logger) conf.Scheduler {
-	configFile, err := getConfig(machineUUID, args.String("config"), prv)
+	configFile, err := getConfig(machineUUID, args.String("config"), args.Bool("from-cluster-inventory"), prv)
 	if err != nil {
 		l.Info("can't read config file", "error", err)
 		os.Exit(1)
@@ -43,31 +43,31 @@ func New(machineUUID string, args *cli.Context, prv provider.Client, l logger.Lo
 	return s
 }
 
-func getConfig(machineUUID, fromArgs string, prv provider.Client) ([]byte, error) {
+func getConfig(machineUUID, fromArgs string, fromClusterInventory bool, prv provider.Client) ([]byte, error) {
 	switch {
-	case os.Getenv("CONFIG_PATH") != "":
-		configFile, err := os.ReadFile(filepath.Clean(os.Getenv("CONFIG_PATH")))
+	case fromArgs != "" || os.Getenv("CONFIG_PATH") != "":
+		path := getConfigPath(fromArgs)
+		configFile, err := os.ReadFile(filepath.Clean(path))
 		if err != nil {
 			return nil, err
 		}
-		generated, genErr := prv.GenerateConfig(machineUUID, configFile)
-		if genErr != nil {
-			return configFile, nil
+		if fromClusterInventory {
+			return prv.GenerateConfig(machineUUID, configFile)
 		}
-		return generated, genErr
-	case fromArgs != "":
-		configFile, err := os.ReadFile(filepath.Clean(fromArgs))
-		if err != nil {
-			return nil, err
-		}
-		generated, genErr := prv.GenerateConfig(machineUUID, configFile)
-		if genErr != nil {
-			return configFile, nil
-		}
-		return generated, genErr
+		return configFile, err
 	case fromArgs == "":
 		return prv.Get(machineUUID, "config")
 	default:
 		return nil, bencherr.NotFound("config")
 	}
+}
+
+func getConfigPath(fromArgs string) string {
+	if fromArgs != "" {
+		return fromArgs
+	}
+	if os.Getenv("CONFIG_PATH") != "" {
+		return os.Getenv("CONFIG_PATH")
+	}
+	return ""
 }

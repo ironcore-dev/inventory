@@ -41,6 +41,12 @@ func checkFlags() []cli.Flag {
 			Usage:   "Specify config file with benchmarks. Example [bench-scheduler run -c examples/config.yaml]",
 			Aliases: []string{"c"},
 		},
+		&cli.BoolFlag{
+			Name:        "from-cluster-inventory",
+			Usage:       "Set up when inventory data override is needed",
+			DefaultText: "false",
+			Value:       false,
+		},
 		&cli.StringFlag{
 			Name:        "kubeconfig,k",
 			Usage:       "Specify provider config file. Example for kubernetes [bench-scheduler run -k ~/.kube/config]",

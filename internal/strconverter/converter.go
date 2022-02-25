@@ -40,7 +40,7 @@ var ServerCPUFullCapacity = int64(runtime.NumCPU()) * defaultQuota
 var letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func QuotaToInt(quota string) int64 {
-	if quota == "all" {
+	if quota == "all" || quota == "*" {
 		return ServerCPUFullCapacity
 	}
 	v := strings.Split(quota, "m")
