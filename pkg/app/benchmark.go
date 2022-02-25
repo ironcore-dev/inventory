@@ -33,7 +33,7 @@ func NewBenchmarkApp() (*BenchmarkApp, int) {
 	var crdSvcConstructor func() (crd.SaverSvc, error)
 	if f.Gateway != "" {
 		crdSvcConstructor = func() (crd.SaverSvc, error) {
-			return crd.NewGatewaySaverSvc(f.Gateway, f.Timeout)
+			return crd.NewGatewaySaverSvc(f.Gateway, f.KubeNamespace, f.Timeout)
 		}
 	} else {
 		crdSvcConstructor = func() (crd.SaverSvc, error) {
