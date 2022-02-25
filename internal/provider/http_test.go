@@ -35,7 +35,8 @@ func TestPatch(t *testing.T) {
 
 	h := httpClient{
 		Client: server.Client(), gateway: fmt.Sprintf("http://%s", server.Listener.Addr().String()),
-		ctx: ctx, log: l,
+		namespace: "onmetal",
+		ctx:       ctx, log: l,
 	}
 
 	mm := make(map[string]benchv1alpha3.Benchmarks)
