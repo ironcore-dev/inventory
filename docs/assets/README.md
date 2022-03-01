@@ -2,4 +2,4 @@
 
 ### Description
 
-Contains any asset required by documentation components.
+This folder contains any asset required by documentation components.

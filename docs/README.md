@@ -1,7 +1,7 @@
 # Documentation
 
 ### Description
-Those folders provides information about utils and development process project. 
+Those folders provide information about utils and development process projects.
 
 To find out more, please refer to:
 - [assets](./assets)
