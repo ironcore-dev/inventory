@@ -10,7 +10,7 @@ Contains CLI tools which helps with machine onboarding. Such as:
 
 ## Start using or developing locally
 
-Please see our documentation in the [`/docs`](./docs/README.md) folder for more details.
+Please see our documentation in the [`/docs`](./docs) folder for more details.
 
 ## Feedback and Support
 
