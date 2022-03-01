@@ -1,4 +1,4 @@
-Full config example can be found [here](../config/samples/config.yaml).
+Full config example can be found [here](../../config/samples/config.yaml).
 
 ```
 benchmarks:
@@ -10,15 +10,6 @@ benchmarks:
       cpu: "8"
     args:
       - '--rw=randread'
-      - '--name=IOPS-randread'
-      - '--size=4096'
-      - '--bs=4k'
-      - '--numjobs=4'
-      - '--iodepth=32 '
-      - '--refill_buffers'
-      - '--group_reporting'
-      - '--runtime=30'
-      - '--time_based'
       - '--filename={{ inputSelector }}'
 ```
 
