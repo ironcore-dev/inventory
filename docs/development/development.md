@@ -1,4 +1,4 @@
-# Documentation Setup
+# Development
 
 The documentation of the [inventory](https://github.com/onmetal/inventory) project is written primarily using Markdown.
 All documentation related content can be found in the `/docs` folder. New content also should be added there.
