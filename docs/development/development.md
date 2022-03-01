@@ -1,6 +1,6 @@
 # Development
 ### Requirements
-Following tools are required to work on that package.
+Following tools are required to work on that project.
 
 - [make](https://www.gnu.org/software/make/) - to execute build goals.
 - [golang](https://golang.org/) - to compile source code.
@@ -10,19 +10,25 @@ Following tools are required to work on that package.
 - [mlc](https://software.intel.com/content/www/us/en/develop/articles/intelr-memory-latency-checker.html) - memory benchmark utility
 
 ### Prerequisites
-To work with benchmark-scheduler application [cgroups](https://www.kernel.org/doc/Documentation/cgroup-v2.txt) are required.
+To work with the benchmark-scheduler application [cgroups](https://www.kernel.org/doc/Documentation/cgroup-v2.txt) are required.
 
+### CRD
+Before usage, we need to install a set of CRD's in the Kubernetes cluster:
+- [inventories](https://github.com/onmetal/metal-api/blob/main/config/crd/bases/machine.onmetal.de_inventories.yaml)
+- [benchmarks](https://github.com/onmetal/metal-api/blob/main/config/crd/bases/benchmark.onmetal.de_machines.yaml)
+
+CRD explanation may be found in the metal-api [api-reference](https://github.com/onmetal/metal-api/tree/main/docs/api-reference).
 # Build
 
-To build all binaries just execute:
+To build all binaries execute:
 ```shell
 make 
 ```
-This will produce a `./dist` directory with all required files. 
+This command will produce a `./dist` directory with all required files. 
 
 ### Setting up Dev
 
-Here's a brief intro about what a developer must do in order to start developing
+Here's a brief intro about what a developer must do to start developing
 the project further:
 
 1. Check cgroups status.

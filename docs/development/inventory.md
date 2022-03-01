@@ -1,7 +1,7 @@
 # inventory
 
-inventory tool responsible for hardware data collection and configuration. After the collection, application will update
-data in the kubernetes cluster CRD. CRD `inventories.machine.onmetal.de` is required.
+Inventory tool responsible for hardware data collection and configuration. After the collection, the application will update
+data in the Kubernetes cluster CRD. CRD `inventories.machine.onmetal.de` is required (more information may be found [here](./development.md)).
 
 ### Run
 
@@ -21,7 +21,7 @@ To remove built distribution directory run:
 
 ### Flags
 
-Following configuration parameters are available for all binaries
+Following configuration parameters are available for all binaries:
 
 - `-k, --kubeconfig`
   

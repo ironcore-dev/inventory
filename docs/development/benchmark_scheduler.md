@@ -1,7 +1,7 @@
 # Benchmark-scheduler
 
-Benchmark-scheduler is a tool responsible for benchmark scheduling and updating results into the kubernetes cluster.
-It requires `machines.benchmark.onmetal.de` CRD in cluster.
+Benchmark-scheduler is a tool responsible for benchmark scheduling and updating results in the Kubernetes cluster.
+It requires `machines.benchmark.onmetal.de` CRD in cluster (more information may be found [here](./development.md)).
 
 ## Usage
 ```

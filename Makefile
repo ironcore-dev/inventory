@@ -45,6 +45,6 @@ clean:
 
 test:
 	@echo "--> Project testing"
-	go test -v ./... -coverprofile cover.out
+	go test -race -v ./... -coverprofile cover.out
 	@echo "--> Making coverage html page"
 	go tool cover -html cover.out -o ./index.html

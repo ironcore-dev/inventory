@@ -1,8 +1,8 @@
 # Installation, using and developing
 
-The documentation of the [inventory](https://github.com/onmetal/inventory) project is written primarily using Markdown.
-All documentation related content can be found in the `/docs` folder. New content also should be added there.
-[MkDocs](https://www.mkdocs.org/) and [MkDocs Material](https://squidfunk.github.io/mkdocs-material/) are then used to render the contents of the `/docs` folder to have a more user-friendly experience when browsing the projects' documentation.
+The documentation of the [inventory](https://github.com/onmetal/inventory) project was written primarily using Markdown.
+All documentation-related content is placed in the `/docs` folder. New content also should be added there.
+[MkDocs](https://www.mkdocs.org/) and [MkDocs Material](https://squidfunk.github.io/mkdocs-material/) used to render the contents of the `/docs` folder to have a more user-friendly experience when browsing the projects' documentation.
 
 Currently, following tools are provided:
 - `inventory` - collects data about system hardware;

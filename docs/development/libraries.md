@@ -1,6 +1,6 @@
 # Libraries
 
-Following libraries are used to simplify the process of data collection and processing
+Following libraries used to simplify the process of data collection and processing:
 
 - [`github.com/digitalocean/go-smbios`](https://github.com/digitalocean/go-smbios) to obtain raw SMBIOS data.
 - [`github.com/diskfs/go-diskfs`](https://github.com/diskfs/go-diskfs) to get data about partition table.
