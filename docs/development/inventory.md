@@ -1,7 +1,7 @@
-# inventory
+# Inventory
 
-Inventory tool responsible for hardware data collection and configuration. After the collection, the application will update
-data in the Kubernetes cluster CRD. CRD `inventories.machine.onmetal.de` is required (more information may be found [here](./development.md)).
+Inventory tool is responsible for hardware data collection and configuration. As soon as data collected, the application will update it in the Kubernetes cluster CRD. 
+CRD `inventories.machine.onmetal.de` is required (more information may be found [here](./development.md)).
 
 ### Run
 
@@ -9,7 +9,12 @@ To execute, simply run
 ```shell
     sudo ./dist/inventory
 ```
-Program uses machine's DMI interface and ioctl, so it requires additional privileges.
+
+Because of:
+- [DMI](https://www.kernel.org/doc/html/v4.15/driver-api/firmware/other_interfaces.html) - Generates a standard framework   for managing and tracking components on a server, by abstracting these components from the software that manages them. 
+- [ioctl](https://man7.org/linux/man-pages/man2/ioctl.2.html) - System call manipulates the underlying device parameters of special files.  In particular, many operating characteristics of character special files (e.g., terminals) maybe controlled with ioctl() requests.
+
+Program usage requires additional privileges.
 
 ### Clean
 

@@ -4,13 +4,14 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![GitHub license](https://img.shields.io/badge/license-APACHE-red.svg?style=flat-square)](https://github.com/onmetal/inventory/blob/master/LICENSE)
 
 ## Background/Overview
-Contains CLI tools that help with machine onboarding. Such as:
-1. Inventories server data. 
-2. Schedule a bunch of benchmarks to not overutilize CPU resources.
+Contains CLI tools such as:
+1. Inventories server data
+2. Schedule a bunch of benchmarks to not overutilize CPU resources
+help to onboard machine.
 
 ## Start using or developing locally
 
-Please see our documentation in the [`/docs`](./docs) folder for more details.
+For more details please refer to documentation in the [`/docs`](./docs) 
 
 ## Feedback and Support
 

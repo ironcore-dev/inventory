@@ -4,16 +4,16 @@ Following tools are required to work on that project.
 
 - [make](https://www.gnu.org/software/make/) - to execute build goals.
 - [golang](https://golang.org/) - to compile source code.
-- [cgroups](https://www.kernel.org/doc/Documentation/cgroup-v2.txt) - to create CPU and other limits.
+- [cgroups](https://www.kernel.org/doc/Documentation/cgroup-v2.txt) - is a Linux kernel feature that limits, accounts for, and isolates the resource usage.
 - [curl](https://curl.se/) - to download resources.
 - [docker](https://www.docker.com/) - to build container with the tool.
 - [mlc](https://software.intel.com/content/www/us/en/develop/articles/intelr-memory-latency-checker.html) - memory benchmark utility
 
 ### Prerequisites
-To work with the benchmark-scheduler application [cgroups](https://www.kernel.org/doc/Documentation/cgroup-v2.txt) are required.
+[Сgroups](https://www.kernel.org/doc/Documentation/cgroup-v2.txt) is required in order to work with the benchmark-scheduler application.
 
 ### CRD
-Before usage, we need to install a set of CRD's in the Kubernetes cluster:
+Before usage, please install a set of CRD's in the Kubernetes cluster:
 - [inventories](https://github.com/onmetal/metal-api/blob/main/config/crd/bases/machine.onmetal.de_inventories.yaml)
 - [benchmarks](https://github.com/onmetal/metal-api/blob/main/config/crd/bases/benchmark.onmetal.de_machines.yaml)
 
