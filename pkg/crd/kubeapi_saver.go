@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	apiv1alpha1 "github.com/onmetal/k8s-inventory/api/v1alpha1"
-	clientv1alpha1 "github.com/onmetal/k8s-inventory/clientset/v1alpha1"
+	apiv1alpha1 "github.com/onmetal/metal-api/apis/inventory/v1alpha1"
+	clientv1alpha1 "github.com/onmetal/metal-api/clientset/inventory/v1alpha1"
 	"github.com/pkg/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
