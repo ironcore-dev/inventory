@@ -13,7 +13,7 @@ import (
 
 const (
 	CSaveRequestURLTemplate  = "%s/apis/v1alpha1/inventory/%s"
-	CPatchRequestURLTemplate = "%s/apis/v1v1alpha1/inventory/%s/%s"
+	CPatchRequestURLTemplate = "%s/apis/v1alpha1/inventory/%s/%s"
 
 	CContentTypeHeader  = "Content-Type"
 	CRequestContentType = "application/json"

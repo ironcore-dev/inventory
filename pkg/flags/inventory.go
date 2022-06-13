@@ -14,6 +14,7 @@ type InventoryFlags struct {
 	KubeNamespace string
 	Gateway       string
 	Timeout       string
+	Patch         bool
 }
 
 func NewInventoryFlags() *InventoryFlags {
@@ -29,6 +30,7 @@ func NewInventoryFlags() *InventoryFlags {
 	kubeNamespace := pflag.StringP("namespace", "n", "default", "k8s namespace")
 	gateway := pflag.StringP("gateway", "g", "", "gateway address")
 	timeout := pflag.StringP("timeout", "t", "30s", "request timeout, if gateway is used")
+	patch := pflag.BoolP("patch", "p", false, "patch crd object instead of creation")
 	pflag.Parse()
 
 	return &InventoryFlags{
@@ -38,5 +40,6 @@ func NewInventoryFlags() *InventoryFlags {
 		KubeNamespace: *kubeNamespace,
 		Gateway:       *gateway,
 		Timeout:       *timeout,
+		Patch:         *patch,
 	}
 }

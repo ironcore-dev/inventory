@@ -31,6 +31,7 @@ type InventoryApp struct {
 	gathererSvc   *gatherer.Svc
 	crdBuilderSvc *crd.BuilderSvc
 	crdSaverSvc   crd.SaverSvc
+	patch         bool
 }
 
 func NewInventoryApp() (*InventoryApp, int) {
@@ -123,6 +124,7 @@ func NewInventoryApp() (*InventoryApp, int) {
 		gathererSvc:   gathererSvc,
 		crdBuilderSvc: crdBuilderSvc,
 		crdSaverSvc:   crdSaverSvc,
+		patch:         f.Patch,
 	}, 0
 }
 
@@ -148,7 +150,11 @@ func (s *InventoryApp) Run() int {
 	s.printer.VOut("Gathered data:")
 	s.printer.VOut(prettifiedJsonBuf.String())
 
-	err = s.crdSaverSvc.Save(cr)
+	if s.patch {
+		err = s.crdSaverSvc.Patch(inv.DMI.SystemInformation.UUID, cr)
+	} else {
+		err = s.crdSaverSvc.Save(cr)
+	}
 	if err != nil {
 		s.printer.Err(errors.Wrap(err, "unable to save inventory resource"))
 		return CErrRetCode
