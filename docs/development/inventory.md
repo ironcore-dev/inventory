@@ -80,6 +80,16 @@ Following configuration parameters are available for all binaries:
     Accepts `string`.
     
     Default value is `/`.
+
+- `-p, --patch bool`
+  
+    CRD method update.
+    
+    Used Patch method instead of Post for CRD update.
+    
+    Accepts `bool`.
+    
+    Default value is `false`.
   
 - `-v, --verbose`
   
