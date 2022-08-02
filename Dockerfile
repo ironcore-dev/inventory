@@ -1,4 +1,4 @@
-FROM golang:1.18.3 as builder
+FROM golang:1.18.5 as builder
 
 ARG GOPRIVATE
 
