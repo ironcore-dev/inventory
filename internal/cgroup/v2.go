@@ -20,8 +20,9 @@ import (
 	"fmt"
 
 	cgroupsv2 "github.com/containerd/cgroups/v2"
-	"github.com/onmetal/inventory/internal/strconverter"
 	conf "github.com/onmetal/metal-api-gateway/app/handlers/benchmark"
+
+	"github.com/onmetal/inventory/internal/strconverter"
 )
 
 const (

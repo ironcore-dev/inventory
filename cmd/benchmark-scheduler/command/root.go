@@ -20,9 +20,10 @@ import (
 	"context"
 	"runtime"
 
+	"github.com/urfave/cli/v2"
+
 	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 	"github.com/onmetal/inventory/internal/dispatcher"
-	"github.com/urfave/cli/v2"
 )
 
 type BenchOpts struct {

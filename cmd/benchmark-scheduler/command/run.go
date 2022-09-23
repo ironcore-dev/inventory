@@ -19,6 +19,8 @@ package command
 import (
 	"context"
 
+	"github.com/urfave/cli/v2"
+
 	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 	"github.com/onmetal/inventory/internal/benchmarks/output"
 	"github.com/onmetal/inventory/internal/config"
@@ -26,7 +28,6 @@ import (
 	"github.com/onmetal/inventory/internal/smbiosinfo"
 	"github.com/onmetal/inventory/internal/updater"
 	"github.com/onmetal/inventory/internal/worker"
-	"github.com/urfave/cli/v2"
 )
 
 func (b *BenchOpts) newRun() *cli.Command {

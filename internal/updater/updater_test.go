@@ -8,11 +8,12 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	benchv1alpha3 "github.com/onmetal/metal-api/apis/benchmark/v1alpha3"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 	"github.com/onmetal/inventory/internal/benchmarks/output"
 	"github.com/onmetal/inventory/internal/provider/fake"
-	benchv1alpha3 "github.com/onmetal/metal-api/apis/benchmark/v1alpha3"
-	"github.com/stretchr/testify/assert"
 )
 
 var errFilePathDefinition = errors.New("can't define test location")

@@ -24,9 +24,10 @@ import (
 	"testing"
 	"time"
 
+	conf "github.com/onmetal/metal-api-gateway/app/handlers/benchmark"
+
 	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 	"github.com/onmetal/inventory/internal/worker"
-	conf "github.com/onmetal/metal-api-gateway/app/handlers/benchmark"
 )
 
 func TestNewWithSize(t *testing.T) {

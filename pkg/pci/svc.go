@@ -1,7 +1,7 @@
 package pci
 
 import (
-	"io/ioutil"
+	"os"
 	"path"
 	"regexp"
 
@@ -33,7 +33,7 @@ func NewSvc(printer *printer.Svc, pciBusSvc *BusSvc, basePath string) *Svc {
 }
 
 func (s *Svc) GetData() ([]Bus, error) {
-	deviceFolders, err := ioutil.ReadDir(s.devicesPath)
+	deviceFolders, err := os.ReadDir(s.devicesPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to get list of device folders")
 	}

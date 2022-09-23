@@ -21,9 +21,10 @@ import (
 	"os/user"
 	"testing"
 
+	conf "github.com/onmetal/metal-api-gateway/app/handlers/benchmark"
+
 	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 	"github.com/onmetal/inventory/internal/benchmarks/output"
-	conf "github.com/onmetal/metal-api-gateway/app/handlers/benchmark"
 )
 
 func TestNew(t *testing.T) {

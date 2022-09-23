@@ -25,8 +25,9 @@ import (
 	_ "unsafe"
 
 	"github.com/digitalocean/go-smbios/smbios"
-	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 	"github.com/pkg/errors"
+
+	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 )
 
 const (

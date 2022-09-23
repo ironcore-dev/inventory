@@ -1,7 +1,7 @@
 package block
 
 import (
-	"io/ioutil"
+	"os"
 	"path"
 
 	"github.com/pkg/errors"
@@ -29,7 +29,7 @@ func NewSvc(printer *printer.Svc, devSvc *DeviceSvc, basePath string) *Svc {
 
 func (s *Svc) GetData() ([]Device, error) {
 	blocks := make([]Device, 0)
-	fileInfos, err := ioutil.ReadDir(s.sysBlockPath)
+	fileInfos, err := os.ReadDir(s.sysBlockPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to get list of block devices")
 	}

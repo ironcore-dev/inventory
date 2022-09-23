@@ -20,12 +20,13 @@ import (
 	"bytes"
 	"os/exec"
 
+	conf "github.com/onmetal/metal-api-gateway/app/handlers/benchmark"
+
 	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 	"github.com/onmetal/inventory/internal/benchmarks/output"
 	"github.com/onmetal/inventory/internal/cgroup"
 	bencherr "github.com/onmetal/inventory/internal/errors"
 	"github.com/onmetal/inventory/internal/strconverter"
-	conf "github.com/onmetal/metal-api-gateway/app/handlers/benchmark"
 )
 
 type Task struct {

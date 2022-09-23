@@ -1,7 +1,7 @@
 package pci
 
 import (
-	"io/ioutil"
+	"os"
 	"path"
 	"regexp"
 
@@ -29,7 +29,7 @@ func NewBusSvc(printer *printer.Svc, pciDevSvc *DeviceSvc) *BusSvc {
 }
 
 func (s *BusSvc) GetBus(thePath string, id string) (*Bus, error) {
-	pciDevFolders, err := ioutil.ReadDir(thePath)
+	pciDevFolders, err := os.ReadDir(thePath)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to get list of block devices")
 	}

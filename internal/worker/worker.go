@@ -19,10 +19,11 @@ package worker
 import (
 	"context"
 
+	conf "github.com/onmetal/metal-api-gateway/app/handlers/benchmark"
+
 	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 	"github.com/onmetal/inventory/internal/benchmarks"
 	"github.com/onmetal/inventory/internal/benchmarks/output"
-	conf "github.com/onmetal/metal-api-gateway/app/handlers/benchmark"
 )
 
 type Worker interface {

@@ -1,7 +1,7 @@
 package nic
 
 import (
-	"io/ioutil"
+	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -12,6 +12,8 @@ import (
 	"github.com/onmetal/inventory/pkg/printer"
 	"github.com/onmetal/inventory/pkg/redis"
 	"github.com/onmetal/inventory/pkg/utils"
+
+	switchv1beta1 "github.com/onmetal/metal-api/apis/switch/v1beta1"
 )
 
 const (
@@ -42,7 +44,7 @@ func (s *Svc) GetData() ([]Device, error) {
 		s.printer.VErr(errors.Wrap(err, "failed to collect host info"))
 	}
 
-	nicFolders, err := ioutil.ReadDir(s.nicDevPath)
+	nicFolders, err := os.ReadDir(s.nicDevPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to get list of nic folders")
 	}
@@ -64,6 +66,9 @@ func (s *Svc) GetData() ([]Device, error) {
 			}
 			nic.Lanes = uint8(len(strings.Split(info[redis.CPortLanes], ",")))
 			nic.FEC = info[redis.CPortFec]
+			if nic.FEC == "" {
+				nic.FEC = switchv1beta1.CFECNone
+			}
 			speed, err := strconv.Atoi(info[redis.CPortSpeed])
 			if err != nil {
 				s.printer.VErr(errors.Wrap(err, "unable to collect additional Device data from Redis"))

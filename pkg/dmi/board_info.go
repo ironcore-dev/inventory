@@ -75,11 +75,11 @@ type BoardInformation struct {
 func BoardInformationFromSpec(ref *BoardInformationRefSpec, strings []string) *BoardInformation {
 	info := &BoardInformation{}
 
-	info.Manufacturer = strings[ref.Manufacturer-1]
-	info.Product = strings[ref.Product-1]
-	info.Version = strings[ref.Version-1]
-	info.SerialNumber = strings[ref.SerialNumber-1]
-	info.AssetTag = strings[ref.AssetTag-1]
+	info.Manufacturer = emptyStringOrValue(ref.Manufacturer, strings)
+	info.Product = emptyStringOrValue(ref.Product, strings)
+	info.Version = emptyStringOrValue(ref.Version, strings)
+	info.SerialNumber = emptyStringOrValue(ref.SerialNumber, strings)
+	info.AssetTag = emptyStringOrValue(ref.AssetTag, strings)
 
 	info.FeatureFlags = []string{}
 	for i, ff := range CBoardFeatureFlags {
@@ -90,7 +90,7 @@ func BoardInformationFromSpec(ref *BoardInformationRefSpec, strings []string) *B
 		}
 	}
 
-	info.LocationInChassis = strings[ref.LocationInChassis-1]
+	info.LocationInChassis = emptyStringOrValue(ref.LocationInChassis, strings)
 	info.ChassisHandle = ref.ChassisHandle
 
 	if byte(len(CBoardTypes)) <= ref.Type {

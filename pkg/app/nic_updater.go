@@ -1,6 +1,12 @@
 package app
 
 import (
+	"fmt"
+	"os"
+
+	apiv1alpha1 "github.com/onmetal/metal-api/apis/inventory/v1alpha1"
+	"github.com/pkg/errors"
+
 	"github.com/onmetal/inventory/pkg/crd"
 	"github.com/onmetal/inventory/pkg/dmi"
 	"github.com/onmetal/inventory/pkg/flags"
@@ -13,8 +19,6 @@ import (
 	"github.com/onmetal/inventory/pkg/nic"
 	"github.com/onmetal/inventory/pkg/printer"
 	"github.com/onmetal/inventory/pkg/redis"
-	apiv1alpha1 "github.com/onmetal/metal-api/apis/inventory/v1alpha1"
-	"github.com/pkg/errors"
 )
 
 type NICUpdaterApp struct {
@@ -25,7 +29,11 @@ type NICUpdaterApp struct {
 }
 
 func NewNICUpdaterApp() (*NICUpdaterApp, int) {
-	f := flags.NewNICUpdaterFlags()
+	f, err := flags.NewNICUpdaterFlags()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return nil, CErrRetCode
+	}
 
 	p := printer.NewSvc(f.Verbose)
 
@@ -53,7 +61,7 @@ func NewNICUpdaterApp() (*NICUpdaterApp, int) {
 
 	hostSvc := host.NewSvc(p, f.Root)
 
-	redisSvc := redis.NewRedisSvc(f.Root)
+	redisSvc := redis.NewRedisSvc(f.Root, f.RedisUser, f.RedisPassword)
 	lldpFrameInfoSvc := frame.NewFrameSvc(p)
 	lldpSvc := lldp.NewSvc(p, lldpFrameInfoSvc, hostSvc, redisSvc, f.Root)
 

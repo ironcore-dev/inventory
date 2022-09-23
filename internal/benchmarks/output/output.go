@@ -18,6 +18,7 @@ package output
 
 import (
 	"github.com/google/uuid"
+
 	bencherr "github.com/onmetal/inventory/internal/errors"
 )
 

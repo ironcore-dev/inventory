@@ -1,7 +1,7 @@
 package numa
 
 import (
-	"io/ioutil"
+	"os"
 	"path"
 	"regexp"
 	"strconv"
@@ -34,7 +34,7 @@ func NewSvc(printer *printer.Svc, nodeSvc *NodeSvc, basePath string) *Svc {
 }
 
 func (s *Svc) GetData() ([]Node, error) {
-	numaFolders, err := ioutil.ReadDir(s.nodeDevicePath)
+	numaFolders, err := os.ReadDir(s.nodeDevicePath)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to get list of numa node devices")
 	}

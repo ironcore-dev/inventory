@@ -3,6 +3,10 @@ package app
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"os"
+
+	"github.com/pkg/errors"
 
 	"github.com/onmetal/inventory/pkg/block"
 	"github.com/onmetal/inventory/pkg/cpu"
@@ -23,7 +27,6 @@ import (
 	"github.com/onmetal/inventory/pkg/printer"
 	"github.com/onmetal/inventory/pkg/redis"
 	"github.com/onmetal/inventory/pkg/virt"
-	"github.com/pkg/errors"
 )
 
 type InventoryApp struct {
@@ -35,8 +38,11 @@ type InventoryApp struct {
 }
 
 func NewInventoryApp() (*InventoryApp, int) {
-	f := flags.NewInventoryFlags()
-
+	f, err := flags.NewInventoryFlags()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return nil, CErrRetCode
+	}
 	p := printer.NewSvc(f.Verbose)
 
 	crdBuilderSvc := crd.NewBuilderSvc(p)
@@ -85,7 +91,7 @@ func NewInventoryApp() (*InventoryApp, int) {
 
 	hostSvc := host.NewSvc(p, f.Root)
 
-	redisSvc := redis.NewRedisSvc(f.Root)
+	redisSvc := redis.NewRedisSvc(f.Root, f.RedisUser, f.RedisPassword)
 	lldpFrameInfoSvc := frame.NewFrameSvc(p)
 	lldpSvc := lldp.NewSvc(p, lldpFrameInfoSvc, hostSvc, redisSvc, f.Root)
 

@@ -62,13 +62,14 @@ type Svc struct {
 	indexPath string
 }
 
-func NewRedisSvc(basePath string) *Svc {
+func NewRedisSvc(basePath, username, password string) *Svc {
 	return &Svc{
 		client: redis.NewClient(&redis.Options{
 			Network:  "unix",
 			Addr:     path.Join(basePath, CRedisSockPath),
-			Password: "", // no password set
-			DB:       0,  // use default DB
+			Username: username,
+			Password: password,
+			DB:       0, // use default DB
 		}),
 		ctx:       context.Background(),
 		indexPath: path.Join(basePath, CClassNetPath),

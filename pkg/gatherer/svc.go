@@ -1,8 +1,9 @@
 package gatherer
 
 import (
-	"github.com/onmetal/inventory/pkg/mlc"
 	"github.com/pkg/errors"
+
+	"github.com/onmetal/inventory/pkg/mlc"
 
 	"github.com/onmetal/inventory/pkg/block"
 	"github.com/onmetal/inventory/pkg/cpu"

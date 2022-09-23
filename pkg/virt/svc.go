@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/binary"
-	"io/ioutil"
 	"os"
 	"path"
 	"strconv"
@@ -279,10 +278,12 @@ func (s *Svc) checkVMWithDMI() (Type, error) {
 		return CTypeNone, errors.Wrapf(err, "unable to get valid dmiData")
 	}
 
-	vendorLocators := []string{
-		dmiData.SystemInformation.ProductName,
-		dmiData.SystemInformation.Manufacturer,
-		dmiData.BIOSInformation.Vendor,
+	vendorLocators := []string{}
+	if dmiData.SystemInformation != nil {
+		vendorLocators = append(vendorLocators, dmiData.SystemInformation.ProductName, dmiData.SystemInformation.Manufacturer)
+	}
+	if dmiData.BIOSInformation != nil {
+		vendorLocators = append(vendorLocators, dmiData.BIOSInformation.Vendor)
 	}
 	for _, board := range dmiData.BoardInformation {
 		vendorLocators = append(vendorLocators, board.Manufacturer)
@@ -388,7 +389,7 @@ func (s *Svc) checkVMWithDeviceTree() (Type, error) {
 			return CTypeVMPowerVM, nil
 		}
 
-		files, err := ioutil.ReadDir(s.deviceTreePath)
+		files, err := os.ReadDir(s.deviceTreePath)
 		if os.IsNotExist(err) {
 			return CTypeNone, nil
 		}
@@ -422,7 +423,7 @@ func (s *Svc) checkVMWithDeviceTree() (Type, error) {
 }
 
 func (s *Svc) checkVMWithZVM() (Type, error) {
-	sysInfoData, err := ioutil.ReadFile(s.procSysInfoPath)
+	sysInfoData, err := os.ReadFile(s.procSysInfoPath)
 	if os.IsNotExist(err) {
 		return CTypeNone, nil
 	}

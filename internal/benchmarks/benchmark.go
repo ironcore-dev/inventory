@@ -17,10 +17,11 @@
 package benchmarks
 
 import (
+	conf "github.com/onmetal/metal-api-gateway/app/handlers/benchmark"
+
 	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 	"github.com/onmetal/inventory/internal/benchmarks/executor"
 	"github.com/onmetal/inventory/internal/benchmarks/output"
-	conf "github.com/onmetal/metal-api-gateway/app/handlers/benchmark"
 )
 
 type Benchmarker interface {

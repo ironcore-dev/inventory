@@ -4,8 +4,9 @@ import (
 	"context"
 	"os"
 
-	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 	"github.com/urfave/cli/v2"
+
+	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 )
 
 const (

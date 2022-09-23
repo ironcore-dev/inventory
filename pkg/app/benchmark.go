@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"encoding/json"
 
+	apiv1alpha1 "github.com/onmetal/metal-api/apis/inventory/v1alpha1"
+	"github.com/pkg/errors"
+
 	"github.com/onmetal/inventory/pkg/crd"
 	"github.com/onmetal/inventory/pkg/flags"
 	"github.com/onmetal/inventory/pkg/gatherer"
 	"github.com/onmetal/inventory/pkg/inventory"
 	"github.com/onmetal/inventory/pkg/mlc"
 	"github.com/onmetal/inventory/pkg/printer"
-	apiv1alpha1 "github.com/onmetal/metal-api/apis/inventory/v1alpha1"
-	"github.com/pkg/errors"
 )
 
 type BenchmarkApp struct {

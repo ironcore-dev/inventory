@@ -10,9 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 	benchv1alpha3 "github.com/onmetal/metal-api/apis/benchmark/v1alpha3"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 )
 
 func TestPatch(t *testing.T) {

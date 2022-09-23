@@ -3,7 +3,7 @@ package mem
 import (
 	"bufio"
 	"bytes"
-	"io/ioutil"
+	"os"
 	"path"
 	"regexp"
 	"strconv"
@@ -50,7 +50,7 @@ func (s *InfoSvc) GetInfo() (*Info, error) {
 }
 
 func (s *InfoSvc) GetInfoFromFile(thePath string) (*Info, error) {
-	memInfoData, err := ioutil.ReadFile(thePath)
+	memInfoData, err := os.ReadFile(thePath)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to read meminfo from %s", thePath)
 	}

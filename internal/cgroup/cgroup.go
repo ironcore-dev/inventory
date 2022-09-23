@@ -21,8 +21,9 @@ import (
 	"path/filepath"
 	"runtime"
 
-	bencherr "github.com/onmetal/inventory/internal/errors"
 	conf "github.com/onmetal/metal-api-gateway/app/handlers/benchmark"
+
+	bencherr "github.com/onmetal/inventory/internal/errors"
 )
 
 type Manager interface {

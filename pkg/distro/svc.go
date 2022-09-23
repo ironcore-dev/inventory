@@ -2,7 +2,7 @@ package distro
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"path"
 	"strings"
 
@@ -19,7 +19,7 @@ type Distro struct {
 	DebianVersion string
 	KernelVersion string
 	AsicType      string
-	CommitId      string
+	CommitID      string
 	BuildDate     string
 	BuildNumber   uint32
 	BuildBy       string
@@ -48,7 +48,7 @@ func (s *Svc) GetData() (*Distro, error) {
 	}
 	switch hostInfo.Type {
 	case utils.CSwitchType:
-		sonicInfo, err := ioutil.ReadFile(s.switchVersionPath)
+		sonicInfo, err := os.ReadFile(s.switchVersionPath)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to read SONiC version file")
 		}

@@ -20,12 +20,13 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
-	bencherr "github.com/onmetal/inventory/internal/errors"
-	"github.com/onmetal/inventory/internal/provider"
 	conf "github.com/onmetal/metal-api-gateway/app/handlers/benchmark"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v2"
+
+	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
+	bencherr "github.com/onmetal/inventory/internal/errors"
+	"github.com/onmetal/inventory/internal/provider"
 )
 
 func New(machineUUID string, args *cli.Context, prv provider.Client, l logger.Logger) conf.Scheduler {

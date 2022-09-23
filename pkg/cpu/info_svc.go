@@ -3,7 +3,7 @@ package cpu
 import (
 	"bufio"
 	"bytes"
-	"io/ioutil"
+	"os"
 	"path"
 	"regexp"
 	"strings"
@@ -34,7 +34,7 @@ func NewInfoSvc(printer *printer.Svc, basePath string) *InfoSvc {
 }
 
 func (s *InfoSvc) GetInfo() ([]Info, error) {
-	cpuInfoData, err := ioutil.ReadFile(s.cpuInfoPath)
+	cpuInfoData, err := os.ReadFile(s.cpuInfoPath)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to read cpuinfo from %s", s.cpuInfoPath)
 	}

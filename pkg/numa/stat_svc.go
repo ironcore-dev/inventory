@@ -3,7 +3,7 @@ package numa
 import (
 	"bufio"
 	"bytes"
-	"io/ioutil"
+	"os"
 	"path"
 	"regexp"
 	"strconv"
@@ -33,7 +33,7 @@ func NewStatSvc(printer *printer.Svc) *StatSvc {
 
 func (s *StatSvc) GetStat(thePath string) (*Stat, error) {
 	statPath := path.Join(thePath, CNodeStat)
-	statData, err := ioutil.ReadFile(statPath)
+	statData, err := os.ReadFile(statPath)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to read stat file from path %s", statPath)
 	}

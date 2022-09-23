@@ -7,10 +7,11 @@ import (
 	"sync"
 
 	"github.com/Jeffail/gabs/v2"
+	benchv1alpha3 "github.com/onmetal/metal-api/apis/benchmark/v1alpha3"
+
 	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 	"github.com/onmetal/inventory/internal/benchmarks/output"
 	"github.com/onmetal/inventory/internal/provider"
-	benchv1alpha3 "github.com/onmetal/metal-api/apis/benchmark/v1alpha3"
 )
 
 const (

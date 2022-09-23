@@ -1,7 +1,7 @@
 package block
 
 import (
-	"io/ioutil"
+	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -27,7 +27,7 @@ func NewDeviceStatSvc(printer *printer.Svc) *DeviceStatSvc {
 
 func (s *DeviceStatSvc) GetDeviceStat(thePath string) (*DeviceStat, error) {
 	statPath := path.Join(thePath, CStatPath)
-	contents, err := ioutil.ReadFile(statPath)
+	contents, err := os.ReadFile(statPath)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to read file %s", statPath)
 	}

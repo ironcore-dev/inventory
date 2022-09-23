@@ -1,7 +1,7 @@
 package ipmi
 
 import (
-	"io/ioutil"
+	"os"
 	"path"
 	"regexp"
 
@@ -32,7 +32,7 @@ func NewSvc(printer *printer.Svc, ipmiDevInfoSvc *DeviceSvc, basePath string) *S
 }
 
 func (s *Svc) GetData() ([]Device, error) {
-	devFolderContents, err := ioutil.ReadDir(s.devPath)
+	devFolderContents, err := os.ReadDir(s.devPath)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to read contents of %s", s.devPath)
 	}

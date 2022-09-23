@@ -1,7 +1,7 @@
 package frame
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/mdlayher/lldp"
 	"github.com/pkg/errors"
@@ -20,7 +20,7 @@ func NewFrameSvc(printer *printer.Svc) *Svc {
 }
 
 func (s *Svc) GetFrame(interfaceID string, thePath string) (*Frame, error) {
-	contents, err := ioutil.ReadFile(thePath)
+	contents, err := os.ReadFile(thePath)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to read file %s", thePath)
 	}

@@ -5,14 +5,15 @@ import (
 	"strconv"
 	"strings"
 
+	apiv1alpha1 "github.com/onmetal/metal-api/apis/inventory/v1alpha1"
+	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	"github.com/onmetal/inventory/pkg/inventory"
 	"github.com/onmetal/inventory/pkg/lldp/frame"
 	"github.com/onmetal/inventory/pkg/netlink"
 	"github.com/onmetal/inventory/pkg/printer"
 	"github.com/onmetal/inventory/pkg/utils"
-	apiv1alpha1 "github.com/onmetal/metal-api/apis/inventory/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/resource"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
@@ -504,7 +505,7 @@ func (s *BuilderSvc) SetDistro(cr *apiv1alpha1.Inventory, inv *inventory.Invento
 		DebianVersion: inv.Distro.DebianVersion,
 		KernelVersion: inv.Distro.KernelVersion,
 		AsicType:      inv.Distro.AsicType,
-		CommitId:      inv.Distro.CommitId,
+		CommitID:      inv.Distro.CommitID,
 		BuildDate:     inv.Distro.BuildDate,
 		BuildNumber:   inv.Distro.BuildNumber,
 		BuildBy:       inv.Distro.BuildBy,

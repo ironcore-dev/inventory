@@ -20,9 +20,10 @@ import (
 	"fmt"
 
 	"github.com/containerd/cgroups"
-	"github.com/onmetal/inventory/internal/strconverter"
 	conf "github.com/onmetal/metal-api-gateway/app/handlers/benchmark"
 	"github.com/opencontainers/runtime-spec/specs-go"
+
+	"github.com/onmetal/inventory/internal/strconverter"
 )
 
 type v1 struct {

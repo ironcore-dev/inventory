@@ -1,7 +1,7 @@
 package numa
 
 import (
-	"io/ioutil"
+	"os"
 	"path"
 	"regexp"
 	"strconv"
@@ -36,7 +36,7 @@ func NewNodeSvc(memInfoSvc *mem.InfoSvc, statSvc *StatSvc) *NodeSvc {
 
 func (s *NodeSvc) GetNode(thePath string, nodeId int) (*Node, error) {
 	distancePath := path.Join(thePath, CNodeDistancePath)
-	distanceData, err := ioutil.ReadFile(distancePath)
+	distanceData, err := os.ReadFile(distancePath)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to read distance file from path %s", distancePath)
 	}
@@ -53,7 +53,7 @@ func (s *NodeSvc) GetNode(thePath string, nodeId int) (*Node, error) {
 	}
 
 	cpuListPath := path.Join(thePath, CNodeCPUListPath)
-	cpuListData, err := ioutil.ReadFile(cpuListPath)
+	cpuListData, err := os.ReadFile(cpuListPath)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to read distance file from path %s", cpuListPath)
 	}

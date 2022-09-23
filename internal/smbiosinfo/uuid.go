@@ -22,8 +22,9 @@ import (
 
 	"github.com/digitalocean/go-smbios/smbios"
 	"github.com/lunixbochs/struc"
-	bencherr "github.com/onmetal/inventory/internal/errors"
 	"github.com/pkg/errors"
+
+	bencherr "github.com/onmetal/inventory/internal/errors"
 )
 
 type WakeUpType string

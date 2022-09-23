@@ -1,7 +1,7 @@
 package lldp
 
 import (
-	"io/ioutil"
+	"os"
 	"path"
 
 	"github.com/pkg/errors"
@@ -45,7 +45,7 @@ func (s *Svc) GetData() ([]frame.Frame, error) {
 
 	switch hostInfo.Type {
 	case utils.CMachineType:
-		frameFiles, err := ioutil.ReadDir(s.lldpPath)
+		frameFiles, err := os.ReadDir(s.lldpPath)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to get list of frame files")
 		}
