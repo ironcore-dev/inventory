@@ -86,7 +86,10 @@ func NewRedisSvc(basePath string) (*Svc, error) {
 	passwordPath := gjson.Get(string(sonicDBJson), fmt.Sprintf("INSTANCES.%s.password_path", instance))
 
 	// remove /var from path because /var/run is a symbolic link to /run and will fail in a container
-	socketPath := strings.Replace(socket.String(), "/var", "", 1)
+	socketPath := socket.String()
+	if strings.HasPrefix(socket.String(), "/var") {
+		socketPath = strings.Replace(socket.String(), "/var", "", 1)
+	}
 
 	password := ""
 	if passwordPath.Exists() && passwordPath.String() != "" {
