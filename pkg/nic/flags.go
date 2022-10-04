@@ -26,11 +26,11 @@ type Flags struct {
 	Echo                       bool
 }
 
-func NewFlags(flagsNum int64) *Flags {
+func NewFlags(flagsNum uint32) *Flags {
 	flags := &Flags{}
 
 	for i := 0; i < CNICFlagsMaxFlagCount; i++ {
-		idx := int64(1 << i)
+		idx := uint32(1 << i)
 		val := flagsNum & idx
 		flags.setByIndex(i, val != 0)
 	}
