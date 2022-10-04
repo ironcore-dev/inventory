@@ -71,7 +71,7 @@ const (
 	CNICNoneType                 = "zero header length"
 )
 
-var CTypes = map[uint16]Type{
+var CTypes = map[int64]Type{
 	0:      CNICNETROMType,
 	1:      CNICEthernetType,
 	2:      CNICExperimentalEthernetType,

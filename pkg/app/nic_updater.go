@@ -1,9 +1,6 @@
 package app
 
 import (
-	"fmt"
-	"os"
-
 	apiv1alpha1 "github.com/onmetal/metal-api/apis/inventory/v1alpha1"
 	"github.com/pkg/errors"
 
@@ -29,12 +26,7 @@ type NICUpdaterApp struct {
 }
 
 func NewNICUpdaterApp() (*NICUpdaterApp, int) {
-	f, err := flags.NewNICUpdaterFlags()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		return nil, CErrRetCode
-	}
-
+	f := flags.NewNICUpdaterFlags()
 	p := printer.NewSvc(f.Verbose)
 
 	crdBuilderSvc := crd.NewBuilderSvc(p)
@@ -61,7 +53,12 @@ func NewNICUpdaterApp() (*NICUpdaterApp, int) {
 
 	hostSvc := host.NewSvc(p, f.Root)
 
-	redisSvc := redis.NewRedisSvc(f.Root, f.RedisUser, f.RedisPassword)
+	redisSvc, err := redis.NewRedisSvc(f.Root)
+	if err != nil {
+		p.Err(errors.Wrapf(err, "unable to init redis client"))
+		return nil, CErrRetCode
+	}
+
 	lldpFrameInfoSvc := frame.NewFrameSvc(p)
 	lldpSvc := lldp.NewSvc(p, lldpFrameInfoSvc, hostSvc, redisSvc, f.Root)
 

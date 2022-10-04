@@ -1,29 +1,23 @@
 package flags
 
 import (
-	"os"
 	"path/filepath"
-
-	"k8s.io/utils/pointer"
 
 	"github.com/spf13/pflag"
 	"k8s.io/client-go/util/homedir"
 )
 
 type InventoryFlags struct {
-	Verbose           bool
-	Root              string
-	Kubeconfig        string
-	KubeNamespace     string
-	Gateway           string
-	Timeout           string
-	Patch             bool
-	RedisUser         string
-	RedisPassword     string
-	RedisPasswordFile string
+	Verbose       bool
+	Root          string
+	Kubeconfig    string
+	KubeNamespace string
+	Gateway       string
+	Timeout       string
+	Patch         bool
 }
 
-func NewInventoryFlags() (*InventoryFlags, error) {
+func NewInventoryFlags() *InventoryFlags {
 	var kubeconfigDefaultPath string
 
 	if home := homedir.HomeDir(); home != "" {
@@ -37,21 +31,7 @@ func NewInventoryFlags() (*InventoryFlags, error) {
 	gateway := pflag.StringP("gateway", "g", "", "gateway address")
 	timeout := pflag.StringP("timeout", "t", "30s", "request timeout, if gateway is used")
 	patch := pflag.BoolP("patch", "p", false, "patch crd object instead of creation")
-	redisUser := pflag.String("redis-user", "", "redis user")
-	redisPassword := pflag.String("redis-password", "", "redis password")
-	redisPasswordFile := pflag.String("redis-password-file", "", "redis password file")
 	pflag.Parse()
-
-	if *redisPasswordFile != "" {
-		passwordFromFile, err := os.ReadFile(*redisPasswordFile)
-		if err != nil {
-			return nil, err
-		}
-
-		if len(passwordFromFile) > 0 {
-			redisPassword = pointer.String(string(passwordFromFile))
-		}
-	}
 
 	return &InventoryFlags{
 		Verbose:       *verbose,
@@ -61,7 +41,5 @@ func NewInventoryFlags() (*InventoryFlags, error) {
 		Gateway:       *gateway,
 		Timeout:       *timeout,
 		Patch:         *patch,
-		RedisUser:     *redisUser,
-		RedisPassword: *redisPassword,
-	}, nil
+	}
 }

@@ -3,8 +3,6 @@ package app
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"os"
 
 	"github.com/pkg/errors"
 
@@ -38,11 +36,7 @@ type InventoryApp struct {
 }
 
 func NewInventoryApp() (*InventoryApp, int) {
-	f, err := flags.NewInventoryFlags()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		return nil, CErrRetCode
-	}
+	f := flags.NewInventoryFlags()
 	p := printer.NewSvc(f.Verbose)
 
 	crdBuilderSvc := crd.NewBuilderSvc(p)
@@ -91,7 +85,12 @@ func NewInventoryApp() (*InventoryApp, int) {
 
 	hostSvc := host.NewSvc(p, f.Root)
 
-	redisSvc := redis.NewRedisSvc(f.Root, f.RedisUser, f.RedisPassword)
+	redisSvc, err := redis.NewRedisSvc(f.Root)
+	if err != nil {
+		p.Err(errors.Wrapf(err, "unable to init redis client"))
+		return nil, CErrRetCode
+	}
+
 	lldpFrameInfoSvc := frame.NewFrameSvc(p)
 	lldpSvc := lldp.NewSvc(p, lldpFrameInfoSvc, hostSvc, redisSvc, f.Root)
 

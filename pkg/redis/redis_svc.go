@@ -2,7 +2,10 @@ package redis
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"math/bits"
+	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -10,16 +13,18 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
 
+	"github.com/tidwall/gjson"
+
 	"github.com/onmetal/inventory/pkg/file"
 	"github.com/onmetal/inventory/pkg/lldp/frame"
 )
 
 const (
-	CRedisSockPath    = "/run/redis/redis.sock"
-	CLLDPEntryKeyMask = "LLDP_ENTRY*"
-	CPortEntryPrefix  = "PORT_TABLE:"
-	CClassNetPath     = "/sys/class/net/"
-	CIndexFile        = "ifindex"
+	CRedisDatabaseConfigFile = "/run/redis/sonic-db/database_config.json"
+	CLLDPEntryKeyMask        = "LLDP_ENTRY*"
+	CPortEntryPrefix         = "PORT_TABLE"
+	CClassNetPath            = "/sys/class/net/"
+	CIndexFile               = "ifindex"
 )
 
 const (
@@ -60,20 +65,53 @@ type Svc struct {
 	client    *redis.Client
 	ctx       context.Context
 	indexPath string
+	separator string
 }
 
-func NewRedisSvc(basePath, username, password string) *Svc {
+func NewRedisSvc(basePath string) (*Svc, error) {
+	sonicDBJson, err := os.ReadFile(path.Join(basePath, CRedisDatabaseConfigFile))
+	if err != nil {
+		return nil, err
+	}
+	sonicDBConfig := &DatabaseConfig{}
+	err = json.Unmarshal(sonicDBJson, sonicDBConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	instance := sonicDBConfig.DATABASES.APPLDB.Instance
+	db := sonicDBConfig.DATABASES.APPLDB.ID
+	separator := sonicDBConfig.DATABASES.APPLDB.Separator
+	socket := gjson.Get(string(sonicDBJson), fmt.Sprintf("INSTANCES.%s.unix_socket_path", instance))
+	passwordPath := gjson.Get(string(sonicDBJson), fmt.Sprintf("INSTANCES.%s.password_path", instance))
+
+	// remove /var from path because /var/run is a symbolic link to /run and will fail in a container
+	socketPath := strings.Replace(socket.String(), "/var", "", 1)
+
+	password := ""
+	if passwordPath.Exists() && passwordPath.String() != "" {
+		passwordFromFile, err := os.ReadFile(path.Join(basePath, passwordPath.String()))
+		if err != nil {
+			return nil, err
+		}
+
+		if len(passwordFromFile) > 0 {
+			password = string(passwordFromFile)
+		}
+	}
+
 	return &Svc{
 		client: redis.NewClient(&redis.Options{
 			Network:  "unix",
-			Addr:     path.Join(basePath, CRedisSockPath),
-			Username: username,
+			Addr:     path.Join(basePath, socketPath),
+			Username: "",
 			Password: password,
-			DB:       0, // use default DB
+			DB:       db,
 		}),
 		ctx:       context.Background(),
 		indexPath: path.Join(basePath, CClassNetPath),
-	}
+		separator: separator,
+	}, nil
 }
 
 func (s *Svc) GetFrames() ([]frame.Frame, error) {
@@ -94,7 +132,7 @@ func (s *Svc) GetFrames() ([]frame.Frame, error) {
 
 func (s *Svc) GetPortAdditionalInfo(name string) (map[string]string, error) {
 	result := map[string]string{CPortLanes: "", CPortFec: ""}
-	key := CPortEntryPrefix + name
+	key := CPortEntryPrefix + s.separator + name
 	for _, f := range CRedisPortFields {
 		val, err := s.client.Do(s.ctx, "HGET", key, f).Result()
 		if err != nil {
