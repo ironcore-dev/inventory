@@ -3,7 +3,6 @@ package redis
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"math/bits"
 	"os"
 	"path"
@@ -12,8 +11,6 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
-
-	"github.com/tidwall/gjson"
 
 	"github.com/onmetal/inventory/pkg/file"
 	"github.com/onmetal/inventory/pkg/lldp/frame"
@@ -25,6 +22,8 @@ const (
 	CPortEntryPrefix         = "PORT_TABLE"
 	CClassNetPath            = "/sys/class/net/"
 	CIndexFile               = "ifindex"
+	CApplDB                  = "APPL_DB"
+	CConfigDB                = "CONFIG_DB"
 )
 
 const (
@@ -79,21 +78,25 @@ func NewRedisSvc(basePath string) (*Svc, error) {
 		return nil, err
 	}
 
-	instance := sonicDBConfig.DATABASES.APPLDB.Instance
-	db := sonicDBConfig.DATABASES.APPLDB.ID
-	separator := sonicDBConfig.DATABASES.APPLDB.Separator
-	socket := gjson.Get(string(sonicDBJson), fmt.Sprintf("INSTANCES.%s.unix_socket_path", instance))
-	passwordPath := gjson.Get(string(sonicDBJson), fmt.Sprintf("INSTANCES.%s.password_path", instance))
+	applDB, ok := sonicDBConfig.Databases[CApplDB]
+	if !ok {
+		return nil, errors.New("Can not get APPL_DB from database config")
+	}
+
+	instance, ok := sonicDBConfig.Instances[applDB.Instance]
+	if !ok {
+		return nil, errors.New("Can not get redis instance for APPL_DB")
+	}
 
 	// remove /var from path because /var/run is a symbolic link to /run and will fail in a container
-	socketPath := socket.String()
-	if strings.HasPrefix(socket.String(), "/var") {
-		socketPath = strings.Replace(socket.String(), "/var", "", 1)
+	socketPath := instance.UnixSocketPath
+	if strings.HasPrefix(socketPath, "/var") {
+		socketPath = strings.Replace(socketPath, "/var", "", 1)
 	}
 
 	password := ""
-	if passwordPath.Exists() && passwordPath.String() != "" {
-		passwordFromFile, err := os.ReadFile(path.Join(basePath, passwordPath.String()))
+	if instance.PasswordPath != "" {
+		passwordFromFile, err := os.ReadFile(path.Join(basePath, instance.PasswordPath))
 		if err != nil {
 			return nil, err
 		}
@@ -109,11 +112,11 @@ func NewRedisSvc(basePath string) (*Svc, error) {
 			Addr:     path.Join(basePath, socketPath),
 			Username: "",
 			Password: password,
-			DB:       db,
+			DB:       applDB.ID,
 		}),
 		ctx:       context.Background(),
 		indexPath: path.Join(basePath, CClassNetPath),
-		separator: separator,
+		separator: applDB.Separator,
 	}, nil
 }
 
