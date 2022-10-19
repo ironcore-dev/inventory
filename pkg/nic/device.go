@@ -4,6 +4,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strconv"
 
 	"github.com/pkg/errors"
@@ -130,7 +131,16 @@ func (n *Device) defPCIAddress(thePath string) error {
 		return errors.Wrapf(err, "unable to get stat for path %s", filePath)
 	}
 
-	n.PCIAddress = fileInfo.Name()
+	// sometimes there are usb devices that breaks the validation
+	// enp0s20f0u1u6 -> ../../devices/pci0000:00/0000:00:14.0/usb1/1-1/1-1.6/1-1.6:1.0/net/enp0s20f0u1u6
+	// in that case we are falling back
+	pciAddress := fileInfo.Name()
+	match, _ := regexp.MatchString("^([0-9a-fA-F]{4}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}.[0-9]{1})|([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})$", pciAddress)
+	if !match {
+		pciAddress = "0000:00:00.0"
+	}
+
+	n.PCIAddress = pciAddress
 
 	return nil
 }

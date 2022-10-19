@@ -68,6 +68,10 @@ type Svc struct {
 }
 
 func NewRedisSvc(basePath string) (*Svc, error) {
+	if _, err := os.ReadFile(path.Join(basePath, CRedisDatabaseConfigFile)); errors.Is(err, os.ErrNotExist) {
+		return nil, nil
+	}
+
 	sonicDBJson, err := os.ReadFile(path.Join(basePath, CRedisDatabaseConfigFile))
 	if err != nil {
 		return nil, err
