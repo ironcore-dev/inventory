@@ -56,7 +56,11 @@ const (
 	CPredictableKernelNameAssignType   = "predictably named by the kernel"
 	CUserspaceNameAssignType           = "named by userspace"
 	CRenamedNameAssignType             = "renamed"
+
+	CPCIAddressPattern = "^([0-9a-fA-F]{4}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}.[0-9]{1})|([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})$"
 )
+
+var CPCIAddressRegex = regexp.MustCompile(CPCIAddressPattern)
 
 type AddressAssignType string
 
@@ -131,15 +135,13 @@ func (n *Device) defPCIAddress(thePath string) error {
 		return errors.Wrapf(err, "unable to get stat for path %s", filePath)
 	}
 
-	// sometimes there are usb devices that breaks the validation
-	// enp0s20f0u1u6 -> ../../devices/pci0000:00/0000:00:14.0/usb1/1-1/1-1.6/1-1.6:1.0/net/enp0s20f0u1u6
-	// in that case we are falling back
+	// Device may use other bus, e.g. USB,
+	// therefore we need to validate whether it is a PCI address or not first
 	pciAddress := fileInfo.Name()
-	match, _ := regexp.MatchString("^([0-9a-fA-F]{4}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}.[0-9]{1})|([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})$", pciAddress)
-	if !match {
-		pciAddress = "0000:00:00.0"
+	isPCIAddress := CPCIAddressRegex.MatchString(pciAddress)
+	if !isPCIAddress {
+		pciAddress = ""
 	}
-
 	n.PCIAddress = pciAddress
 
 	return nil
