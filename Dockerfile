@@ -34,7 +34,7 @@ RUN git clone https://github.com/ColinIanKing/stress-ng.git && \
   	STATIC=1 make
 
 
-FROM amd64/busybox:1.35.0
+FROM amd64/busybox:1.36.0
 
 WORKDIR /app
 
