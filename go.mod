@@ -3,7 +3,7 @@ module github.com/onmetal/inventory
 go 1.19
 
 require (
-	github.com/Jeffail/gabs/v2 v2.6.1
+	github.com/Jeffail/gabs/v2 v2.7.0
 	github.com/containerd/cgroups v1.1.0
 	github.com/digitalocean/go-smbios v0.0.0-20180907143718-390a4f403a8e
 	github.com/diskfs/go-diskfs v1.1.1
