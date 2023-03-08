@@ -6,7 +6,7 @@ require (
 	github.com/Jeffail/gabs/v2 v2.7.0
 	github.com/containerd/cgroups v1.1.0
 	github.com/digitalocean/go-smbios v0.0.0-20180907143718-390a4f403a8e
-	github.com/diskfs/go-diskfs v1.1.1
+	github.com/diskfs/go-diskfs v1.3.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/google/addlicense v1.0.0
 	github.com/google/uuid v1.3.0
@@ -65,6 +65,8 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/onmetal/ipam v0.0.12 // indirect
+	github.com/pierrec/lz4 v2.3.0+incompatible // indirect
+	github.com/pkg/xattr v0.4.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.13.0 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
@@ -72,6 +74,7 @@ require (
 	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
+	github.com/ulikunitz/xz v0.5.10 // indirect
 	github.com/vishvananda/netns v0.0.0-20191106174202-0a2b9b5464df // indirect
 	github.com/vtolstov/go-ioctl v0.0.0-20151206205506-6be9cced4810 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
