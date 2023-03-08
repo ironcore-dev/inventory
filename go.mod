@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/Jeffail/gabs/v2 v2.6.1
-	github.com/containerd/cgroups v1.0.3
+	github.com/containerd/cgroups v1.1.0
 	github.com/digitalocean/go-smbios v0.0.0-20180907143718-390a4f403a8e
 	github.com/diskfs/go-diskfs v1.1.1
 	github.com/go-redis/redis/v8 v8.8.2
@@ -17,7 +17,7 @@ require (
 	github.com/opencontainers/runtime-spec v1.0.2
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/testify v1.7.4
+	github.com/stretchr/testify v1.8.0
 	github.com/u-root/u-root v7.0.0+incompatible
 	github.com/urfave/cli/v2 v2.3.0
 	github.com/vishvananda/netlink v1.1.0
@@ -32,7 +32,7 @@ require (
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/cilium/ebpf v0.4.0 // indirect
+	github.com/cilium/ebpf v0.9.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.3.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
