@@ -37,18 +37,12 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 RUN --mount=type=cache,target=/root/.cache/go-build \
   --mount=type=cache,target=/go/pkg \
   CGO_ENABLED=0 GOOS=linux GOARCH=${GOARCH} GO111MODULE=on go build -a -o bin/benchmark-scheduler cmd/benchmark-scheduler/main.go
-RUN git clone https://github.com/axboe/fio.git && \
-    cd fio/ && \
-    ./configure --build-static && \
-    make && \
-    make install
-RUN git clone https://github.com/ColinIanKing/stress-ng.git && \
-    cd stress-ng/ && \
-    make clean && \
-    STATIC=1 make
 
+FROM debian:testing-slim
 
-FROM amd64/busybox:1.35.0
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends fio stress-ng\
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -56,6 +50,4 @@ COPY --from=builder /build/bin/inventory .
 COPY --from=builder /build/bin/nic-updater .
 COPY --from=builder /build/bin/benchmark .
 COPY --from=builder /build/bin/benchmark-scheduler .
-COPY --from=builder /build/fio/fio /usr/local/bin/
-COPY --from=builder /build/stress-ng/stress-ng /usr/local/bin/
 COPY --from=builder /build/res/pci.ids ./res/
