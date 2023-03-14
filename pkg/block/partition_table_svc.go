@@ -43,7 +43,7 @@ func NewPartitionTableSvc(basePath string) *PartitionTableSvc {
 
 func (s *PartitionTableSvc) GetPartitionTable(devName string) (*PartitionTable, error) {
 	devPath := path.Join(s.devPath, devName)
-	disk, err := diskfs.OpenWithMode(devPath, diskfs.ReadOnly)
+	disk, err := diskfs.Open(devPath, diskfs.WithOpenMode(diskfs.ReadOnly))
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to open device %s", devPath)
 	}
