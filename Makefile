@@ -9,6 +9,8 @@ LLDP_UPDATE_BIN_NAME = "nic-updater"
 BENCHMARK_BIN_NAME = "benchmark"
 BENCHMARK_SCHEDULER_BIN_NAME = "benchmark-scheduler"
 
+GOPRIVATE ?= "github.com/onmetal/*"
+
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
 GOBIN=$(shell go env GOPATH)/bin
