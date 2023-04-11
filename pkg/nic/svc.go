@@ -26,8 +26,7 @@ import (
 	"github.com/onmetal/inventory/pkg/printer"
 	"github.com/onmetal/inventory/pkg/redis"
 	"github.com/onmetal/inventory/pkg/utils"
-
-	switchv1beta1 "github.com/onmetal/metal-api/apis/switch/v1beta1"
+	switchConstants "github.com/onmetal/metal-api/pkg/constants"
 )
 
 const (
@@ -81,7 +80,7 @@ func (s *Svc) GetData() ([]Device, error) {
 			nic.Lanes = uint8(len(strings.Split(info[redis.CPortLanes], ",")))
 			nic.FEC = info[redis.CPortFec]
 			if nic.FEC == "" {
-				nic.FEC = switchv1beta1.CFECNone
+				nic.FEC = switchConstants.FECNone
 			}
 			speed, err := strconv.Atoi(info[redis.CPortSpeed])
 			if err != nil {
