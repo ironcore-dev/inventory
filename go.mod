@@ -13,7 +13,7 @@ require (
 	github.com/jeek120/cpuid v0.0.0-20200914054105-8fa8c861dea6
 	github.com/lunixbochs/struc v0.0.0-20200707160740-784aaebc1d40
 	github.com/mdlayher/lldp v0.0.0-20150915211757-afd9f83164c5
-	github.com/onmetal/metal-api v0.9.2
+	github.com/onmetal/metal-api v0.9.3
 	github.com/onmetal/metal-api-gateway v0.4.1
 	github.com/opencontainers/runtime-spec v1.0.2
 	github.com/pkg/errors v0.9.1
@@ -85,7 +85,7 @@ require (
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/oauth2 v0.4.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/sys v0.7.0 // indirect
 	golang.org/x/term v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
