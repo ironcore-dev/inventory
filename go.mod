@@ -15,7 +15,7 @@ require (
 	github.com/mdlayher/lldp v0.0.0-20150915211757-afd9f83164c5
 	github.com/onmetal/metal-api v0.9.4
 	github.com/onmetal/metal-api-gateway v0.4.1
-	github.com/opencontainers/runtime-spec v1.0.3-0.20210326190908-1c3f411f0417
+	github.com/opencontainers/runtime-spec v1.1.0-rc.3
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.4
