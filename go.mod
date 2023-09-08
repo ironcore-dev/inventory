@@ -13,7 +13,7 @@ require (
 	github.com/jeek120/cpuid v0.0.0-20200914054105-8fa8c861dea6
 	github.com/lunixbochs/struc v0.0.0-20200707160740-784aaebc1d40
 	github.com/mdlayher/lldp v0.0.0-20150915211757-afd9f83164c5
-	github.com/onmetal/metal-api v0.10.1
+	github.com/onmetal/metal-api v0.10.2
 	github.com/onmetal/metal-api-gateway v0.4.1
 	github.com/opencontainers/runtime-spec v1.1.0
 	github.com/pkg/errors v0.9.1
