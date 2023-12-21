@@ -9,7 +9,7 @@ require (
 	github.com/diskfs/go-diskfs v1.4.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/google/addlicense v1.1.1
-	github.com/google/uuid v1.4.0
+	github.com/google/uuid v1.5.0
 	github.com/jeek120/cpuid v0.0.0-20200914054105-8fa8c861dea6
 	github.com/lunixbochs/struc v0.0.0-20200707160740-784aaebc1d40
 	github.com/mdlayher/lldp v0.0.0-20150915211757-afd9f83164c5
