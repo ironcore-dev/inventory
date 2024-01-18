@@ -14,7 +14,7 @@
 
 package crd
 
-import apiv1alpha1 "github.com/onmetal/metal-api/apis/inventory/v1alpha1"
+import apiv1alpha1 "github.com/ironcore-dev/metal/apis/metal/v1alpha4"
 
 type SaverSvc interface {
 	Save(inv *apiv1alpha1.Inventory) error

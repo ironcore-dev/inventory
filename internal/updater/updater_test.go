@@ -22,7 +22,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	benchv1alpha3 "github.com/onmetal/metal-api/apis/benchmark/v1alpha3"
+	metalv1alpha4 "github.com/ironcore-dev/metal/apis/metal/v1alpha4"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
@@ -54,7 +54,7 @@ func TestDo(t *testing.T) {
 		log:       l,
 		results:   getResults(data),
 		Client:    fakeClient,
-		resultMap: make(map[string]benchv1alpha3.Benchmarks),
+		resultMap: make(map[string]metalv1alpha4.Benchmarks),
 	}
 	if err := m.Do(); !a.Nil(err) {
 		t.Log(err)

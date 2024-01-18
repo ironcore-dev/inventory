@@ -17,6 +17,7 @@ package netlink
 import (
 	"github.com/pkg/errors"
 	"github.com/vishvananda/netlink"
+	"golang.org/x/sys/unix"
 
 	"github.com/onmetal/inventory/pkg/chroot"
 	"github.com/onmetal/inventory/pkg/printer"
@@ -59,7 +60,7 @@ func (s *Svc) GetIPv6NeighbourData() ([]IPv6Neighbour, error) {
 	for _, l := range ll {
 		iIdx := l.Attrs().Index
 		iName := l.Attrs().Name
-		nl, err := netlink.NeighList(iIdx, netlink.FAMILY_V6)
+		nl, err := netlink.NeighList(iIdx, unix.AF_INET6)
 		if err != nil {
 			s.printer.VErr(errors.Wrapf(err, "unable to get neighbours for %s", iName))
 			continue

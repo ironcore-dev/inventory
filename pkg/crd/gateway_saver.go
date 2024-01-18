@@ -20,7 +20,7 @@ import (
 	"net/http"
 	"time"
 
-	apiv1alpha1 "github.com/onmetal/metal-api/apis/inventory/v1alpha1"
+	metalv1alpha4 "github.com/ironcore-dev/metal/apis/metal/v1alpha4"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/util/json"
 )
@@ -53,7 +53,7 @@ func NewGatewaySaverSvc(host, namespace string, timeout string) (SaverSvc, error
 	}, nil
 }
 
-func (g GatewaySaverSvc) Save(inv *apiv1alpha1.Inventory) error {
+func (g GatewaySaverSvc) Save(inv *metalv1alpha4.Inventory) error {
 	url := fmt.Sprintf(CSaveRequestURLTemplate, g.host, g.namespace)
 
 	body, err := json.Marshal(inv)

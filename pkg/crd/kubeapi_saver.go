@@ -18,8 +18,8 @@ import (
 	"context"
 	"fmt"
 
-	apiv1alpha1 "github.com/onmetal/metal-api/apis/inventory/v1alpha1"
-	clientv1alpha1 "github.com/onmetal/metal-api/clientset/inventory/v1alpha1"
+	metalv1alpha4 "github.com/ironcore-dev/metal/apis/metal/v1alpha4"
+	clientv1alpha1 "github.com/ironcore-dev/metal/clientset/inventory/v1alpha1"
 	"github.com/pkg/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -43,7 +43,7 @@ func NewKubeAPISaverSvc(kubeconfig string, namespace string) (SaverSvc, error) {
 		return nil, errors.Wrapf(err, "unable to read kubeconfig from path %s", kubeconfig)
 	}
 
-	if err := apiv1alpha1.AddToScheme(scheme.Scheme); err != nil {
+	if err := metalv1alpha4.AddToScheme(scheme.Scheme); err != nil {
 		return nil, errors.Wrap(err, "unable to add registered types to client scheme")
 	}
 
@@ -59,7 +59,7 @@ func NewKubeAPISaverSvc(kubeconfig string, namespace string) (SaverSvc, error) {
 	}, nil
 }
 
-func (s *KubeAPISaverSvc) Save(inv *apiv1alpha1.Inventory) error {
+func (s *KubeAPISaverSvc) Save(inv *metalv1alpha4.Inventory) error {
 	_, err := s.client.Create(context.Background(), inv, metav1.CreateOptions{})
 	if err == nil {
 		return nil

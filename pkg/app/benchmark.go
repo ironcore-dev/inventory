@@ -18,7 +18,7 @@ import (
 	"bytes"
 	"encoding/json"
 
-	apiv1alpha1 "github.com/onmetal/metal-api/apis/inventory/v1alpha1"
+	metalv1alpha4 "github.com/ironcore-dev/metal/apis/metal/v1alpha4"
 	"github.com/pkg/errors"
 
 	"github.com/onmetal/inventory/pkg/crd"
@@ -98,7 +98,7 @@ func (s *BenchmarkApp) Run() int {
 	s.printer.VOut("Gathered data:")
 	s.printer.VOut(prettifiedJsonBuf.String())
 
-	buildSetters := []func(*apiv1alpha1.Inventory, *inventory.Inventory){
+	buildSetters := []func(*metalv1alpha4.Inventory, *inventory.Inventory){
 		s.crdBuilderSvc.SetMLCPerf,
 	}
 

@@ -24,7 +24,7 @@ import (
 	"testing"
 	"time"
 
-	benchv1alpha3 "github.com/onmetal/metal-api/apis/benchmark/v1alpha3"
+	metalv1alpha4 "github.com/ironcore-dev/metal/apis/metal/v1alpha4"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
@@ -54,9 +54,9 @@ func TestPatch(t *testing.T) {
 		ctx:       ctx, log: l,
 	}
 
-	mm := make(map[string]benchv1alpha3.Benchmarks)
-	mm["test"] = []benchv1alpha3.Benchmark{{Name: "disk-test", Value: 123}}
-	spec := benchv1alpha3.Machine{Spec: benchv1alpha3.MachineSpec{Benchmarks: mm}}
+	mm := make(map[string]metalv1alpha4.Benchmarks)
+	mm["test"] = []metalv1alpha4.BenchmarkResult{{Name: "disk-test", Value: 123}}
+	spec := metalv1alpha4.Benchmark{Spec: metalv1alpha4.BenchmarkSpec{Benchmarks: mm}}
 
 	patch, err := json.Marshal(spec)
 	a.Nil(err, "json serialization failed")

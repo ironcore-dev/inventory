@@ -22,11 +22,12 @@ import (
 
 	"github.com/pkg/errors"
 
+	switchConstants "github.com/ironcore-dev/metal/pkg/constants"
+
 	"github.com/onmetal/inventory/pkg/host"
 	"github.com/onmetal/inventory/pkg/printer"
 	"github.com/onmetal/inventory/pkg/redis"
 	"github.com/onmetal/inventory/pkg/utils"
-	switchConstants "github.com/onmetal/metal-api/pkg/constants"
 )
 
 const (

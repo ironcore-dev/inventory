@@ -21,7 +21,7 @@ import (
 	"sync"
 
 	"github.com/Jeffail/gabs/v2"
-	benchv1alpha3 "github.com/onmetal/metal-api/apis/benchmark/v1alpha3"
+	metalv1alpha4 "github.com/ironcore-dev/metal/apis/metal/v1alpha4"
 
 	"github.com/onmetal/inventory/cmd/benchmark-scheduler/logger"
 	"github.com/onmetal/inventory/internal/benchmarks/output"
@@ -35,7 +35,7 @@ const (
 type Machine struct {
 	provider.Client
 
-	resultMap map[string]benchv1alpha3.Benchmarks
+	resultMap map[string]metalv1alpha4.Benchmarks
 	uuid      string
 	wg        *sync.WaitGroup
 	log       logger.Logger
@@ -52,7 +52,7 @@ func New(machineUUID string, results []output.Result, c provider.Client, l logge
 		wg:        new(sync.WaitGroup),
 		uuid:      machineUUID,
 		results:   results,
-		resultMap: make(map[string]benchv1alpha3.Benchmarks, len(results)),
+		resultMap: make(map[string]metalv1alpha4.Benchmarks, len(results)),
 		log:       l,
 	}, nil
 }
@@ -72,22 +72,22 @@ func (m *Machine) Do() error {
 			value := m.parseText(&m.results[r])
 			benches, ok := m.resultMap[name]
 			if !ok {
-				m.resultMap[name] = benchv1alpha3.Benchmarks{{Name: m.results[r].BenchmarkName, Value: value}}
+				m.resultMap[name] = metalv1alpha4.Benchmarks{{Name: m.results[r].BenchmarkName, Value: value}}
 				continue
 			}
-			m.resultMap[name] = append(benches, benchv1alpha3.Benchmark{
+			m.resultMap[name] = append(benches, metalv1alpha4.BenchmarkResult{
 				Name: m.results[r].BenchmarkName, Value: value,
 			})
 		default:
 			value := m.parseJSON(&m.results[r])
 			benches, ok := m.resultMap[name]
 			if !ok {
-				m.resultMap[name] = benchv1alpha3.Benchmarks{{Name: m.results[r].BenchmarkName, Value: value}}
+				m.resultMap[name] = metalv1alpha4.Benchmarks{{Name: m.results[r].BenchmarkName, Value: value}}
 			}
-			m.resultMap[name] = append(benches, benchv1alpha3.Benchmark{Name: m.results[r].BenchmarkName, Value: value})
+			m.resultMap[name] = append(benches, metalv1alpha4.BenchmarkResult{Name: m.results[r].BenchmarkName, Value: value})
 		}
 	}
-	patch := benchv1alpha3.Machine{Spec: benchv1alpha3.MachineSpec{Benchmarks: m.resultMap}}
+	patch := metalv1alpha4.Benchmark{Spec: metalv1alpha4.BenchmarkSpec{Benchmarks: m.resultMap}}
 	body, err := json.Marshal(patch)
 	if err != nil {
 		return err
