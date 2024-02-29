@@ -5,3 +5,4 @@
 # dist folder
 /dist
 /vendor
+/bin

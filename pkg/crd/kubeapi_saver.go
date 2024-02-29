@@ -19,7 +19,7 @@ import (
 	"fmt"
 
 	metalv1alpha4 "github.com/ironcore-dev/metal/apis/metal/v1alpha4"
-	clientv1alpha1 "github.com/ironcore-dev/metal/clientset/inventory/v1alpha1"
+	clientv1alpha1 "github.com/ironcore-dev/metal/client/metal/typed/metal/v1alpha4"
 	"github.com/pkg/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
