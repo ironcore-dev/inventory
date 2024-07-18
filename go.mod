@@ -21,7 +21,7 @@ require (
 	golang.org/x/sys v0.22.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.30.3
-	k8s.io/client-go v0.30.2
+	k8s.io/client-go v0.30.3
 	sigs.k8s.io/controller-runtime v0.18.4
 )
 
@@ -70,7 +70,7 @@ require (
 	gopkg.in/djherbis/times.v1 v1.3.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	k8s.io/api v0.30.2 // indirect
+	k8s.io/api v0.30.3 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20240430033511-f0e62f92d13f // indirect
 	k8s.io/utils v0.0.0-20240502163921-fe8a2dddb1d0 // indirect
