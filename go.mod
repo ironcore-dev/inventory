@@ -15,7 +15,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/pflag v1.0.5
 	github.com/u-root/u-root v7.0.0+incompatible
-	github.com/urfave/cli/v2 v2.27.3
+	github.com/urfave/cli/v2 v2.27.4
 	github.com/vishvananda/netlink v1.2.1-beta.2
 	go.uber.org/zap v1.27.0
 	golang.org/x/sys v0.24.0
