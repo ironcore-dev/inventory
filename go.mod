@@ -18,7 +18,7 @@ require (
 	github.com/urfave/cli/v2 v2.27.4
 	github.com/vishvananda/netlink v1.3.0
 	go.uber.org/zap v1.27.0
-	golang.org/x/sys v0.24.0
+	golang.org/x/sys v0.25.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.31.0
 	k8s.io/client-go v0.31.0
