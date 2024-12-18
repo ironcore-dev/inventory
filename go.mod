@@ -4,7 +4,7 @@ go 1.22.4
 
 require (
 	github.com/digitalocean/go-smbios v0.0.0-20180907143718-390a4f403a8e
-	github.com/diskfs/go-diskfs v1.4.1
+	github.com/diskfs/go-diskfs v1.5.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/google/addlicense v1.1.1
 	github.com/google/uuid v1.6.0
